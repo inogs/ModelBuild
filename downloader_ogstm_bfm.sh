@@ -2,7 +2,7 @@
 
 
   BFM_version=BFMv2   #  BFMv2 or bfmv5
-  BFM_RELEASE=branches/pl_mod 
+  BFM_RELEASE=branches/new_nutupt
 
  OGSTM_BRANCH=un24_omp_optimized
  VAR3D_BRANCH=most_optimized
