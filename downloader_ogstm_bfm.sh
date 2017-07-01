@@ -5,7 +5,7 @@
   BFM_RELEASE=branches/new_nutupt
 
  OGSTM_BRANCH=un24_omp_optimized
- VAR3D_BRANCH=first_attempt
+ VAR3D_BRANCH=WithVb
 
 SVN_USER=svnogs01  # user on https://hpc-forge.cineca.it/
 # ----------- BFM library ---------------------
