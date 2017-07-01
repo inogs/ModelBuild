@@ -12,7 +12,7 @@ SVN_USER=svnogs01  # user on https://hpc-forge.cineca.it/
 
 OGSTM_HOME=$PWD
 
-svn co https://hpc-forge.cineca.it/svn/${BFM_version}/${BFM_RELEASE} -r 118 bfm
+svn co https://hpc-forge.cineca.it/svn/${BFM_version}/${BFM_RELEASE} -r 119 bfm
 
 cd $OGSTM_HOME
 git clone git@gitlab.hpc.cineca.it:OGS/ogstm.git
