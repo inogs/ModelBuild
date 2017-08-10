@@ -44,7 +44,7 @@ source $MODULEFILE
 # Set OCEANVAR=true         to include oceanvar.
 #     DEBUG_OCEANVAR=.dbg   to use debug flags
 
-OCEANVAR=false
+OCEANVAR=true
 DEBUG_OCEANVAR=
 ###################################################################
 
@@ -129,7 +129,7 @@ export BFM_INC=${BFMDIR}/include
 export BFM_LIB=${BFMDIR}/lib
 
 
-CMAKE=1
+CMAKE=0
 
 cd $OGSTMDIR/..
 if [ $CMAKE -eq 1 ] ; then
