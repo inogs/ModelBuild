@@ -2,12 +2,12 @@
 
 
   BFM_version=BFMv2   #  BFMv2 or bfmv5
-  BFM_RELEASE=branches/pl_mod 
+  BFM_RELEASE=tags/release-2.1
 
- OGSTM_BRANCH=un24_omp_optimized
+ OGSTM_BRANCH=release-2.3
  VAR3D_BRANCH=most_optimized
 
-SVN_USER=svnogs01  # user on https://hpc-forge.cineca.it/
+SVN_USER=gbolzon  # user on https://hpc-forge.cineca.it/
 # ----------- BFM library ---------------------
 
 OGSTM_HOME=$PWD
@@ -24,13 +24,9 @@ else
 fi
 
 cd $OGSTM_HOME
-#svn co --username $SVN_USER https://hpc-forge.cineca.it/svn/ogstm/${OGSTM_RELEASE} ogstm
 git clone git@gitlab.hpc.cineca.it:OGS/ogstm.git
 cd ogstm
-git checkout -b $OGSTM_BRANCH origin/$OGSTM_BRANCH
+git checkout -b $OGSTM_BRANCH $OGSTM_BRANCH
 
 cd $OGSTM_HOME
-# svn co https://hpc-forge.cineca.it/svn/opa_rea/DA/src/3d_var 
-git clone git@gitlab.hpc.cineca.it:OGS/3DVar.git
-cd 3DVar
-git checkout -b $VAR3D_BRANCH origin/$VAR3D_BRANCH
+svn co https://hpc-forge.cineca.it/svn/opa_rea/tags/DA_3d_var_release-2.1/ 3d_var
