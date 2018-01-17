@@ -4,8 +4,8 @@
   BFM_version=BFMv2   #  BFMv2 or bfmv5
   BFM_RELEASE=branches/pl_mod 
 
- OGSTM_BRANCH=un24_omp_optimized
- VAR3D_BRANCH=most_optimized
+ OGSTM_BRANCH=Multivariate
+ VAR3D_BRANCH=Multivariate
 
 SVN_USER=svnogs01  # user on https://hpc-forge.cineca.it/
 # ----------- BFM library ---------------------
