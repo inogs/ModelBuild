@@ -11,7 +11,15 @@ SVN_USER=svnogs01  # user on https://hpc-forge.cineca.it/
 
 OGSTM_HOME=$PWD
 
+if  [ $BFM_version ==  BFMv2 ] ; then
 svn co https://hpc-forge.cineca.it/svn/${BFM_version}/${BFM_RELEASE} -r 119 bfm
+else
+    # Requirement: to have an account on git server
+    git clone git@dev.cmcc.it:bfm
+    cd bfm
+    git checkout dev
+fi
+
 
 cd $OGSTM_HOME
 git clone git@gitlab.hpc.cineca.it:OGS/ogstm.git
