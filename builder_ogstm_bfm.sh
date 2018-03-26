@@ -134,7 +134,7 @@ CMAKE=1
 cd $OGSTMDIR/..
 if [ $CMAKE -eq 1 ] ; then
   # ------------ new OGSTM builder based on cmake -----------------
-        if [ $DEBUG == .dbg ] ; then
+        if [[ $DEBUG == .dbg ]] ; then
            CMAKE_BUILD_TYPE=Debug
         else
            CMAKE_BUILD_TYPE=Release
