@@ -18,9 +18,9 @@ svn co --username $SVN_USER https://hpc-forge.cineca.it/svn/${BFM_version}/${BFM
 
 else
     # Requirement: to have an account on git server
-    git clone git@dev.cmcc.it:bfm
+    git clone git@github.com:CMCC-Foundation/BiogeochemicalFluxModel.git bfm
     cd bfm
-    git checkout dev
+    git checkout -b dev origin/dev
 fi
 
 cd $OGSTM_HOME
