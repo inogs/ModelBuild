@@ -15,9 +15,9 @@ if  [ $BFM_version ==  BFMv2 ] ; then
 svn co https://hpc-forge.cineca.it/svn/${BFM_version}/${BFM_RELEASE} -r 119 bfm
 else
     # Requirement: to have an account on git server
-    git clone git@dev.cmcc.it:bfm
+    git clone git@github.com:CMCC-Foundation/BiogeochemicalFluxModel.git bfm
     cd bfm
-    git checkout dev
+    git checkout -b dev origin/dev
 fi
 
 
