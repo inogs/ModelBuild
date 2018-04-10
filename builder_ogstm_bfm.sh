@@ -34,7 +34,7 @@ export OPENMP_FLAG=          # OpenMP deactivated
 # Warning : this choice must be consistent with Section 1. 
 
 # Just comment the two following lines you are not using modules. 
-export MODULEFILE=$PWD/ogstm/compilers/machine_modules/pico.intel
+export MODULEFILE=$PWD/ogstm/compilers/machine_modules/marconi.intel
 source $MODULEFILE
 
 
@@ -136,15 +136,16 @@ if [ $CMAKE -eq 1 ] ; then
   # ------------ new OGSTM builder based on cmake -----------------
         if [[ $DEBUG == .dbg ]] ; then
            CMAKE_BUILD_TYPE=Debug
+           OGSTM_BLD_DIR=OGSTM_BUILD_DBG
         else
            CMAKE_BUILD_TYPE=Release
+           OGSTM_BLD_DIR=OGSTM_BUILD
         fi
 	export BFM_INCLUDE=$BFM_INC
 	export BFM_LIBRARY=$BFM_LIB
 	export NETCDFF_LIB=$NETCDFF_LIB/libnetcdff.so
 	export NETCDF_LIB=$NETCDF_LIB/libnetcdf.so
 	
-	OGSTM_BLD_DIR=OGSTM_BUILD
 	mkdir -p $OGSTM_BLD_DIR
 	cd $OGSTM_BLD_DIR
 
