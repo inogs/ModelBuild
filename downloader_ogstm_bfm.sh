@@ -4,8 +4,8 @@
   BFM_version=BFMv2   #  BFMv2 or bfmv5
   BFM_RELEASE=tags/release-3.1/
 
- OGSTM_BRANCH=release-3.1
- VAR3D_BRANCH=release-3.1
+ OGSTM_BRANCH=release-3.2
+ VAR3D_BRANCH=release-3.2
 
 SVN_USER=svnogs01  # user on https://hpc-forge.cineca.it/
 # ----------- BFM library ---------------------
