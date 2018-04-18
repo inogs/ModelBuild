@@ -34,7 +34,7 @@ export OPENMP_FLAG=          # OpenMP deactivated
 # Warning : this choice must be consistent with Section 1. 
 
 # Just comment the two following lines you are not using modules. 
-export MODULEFILE=$PWD/ogstm/compilers/machine_modules/pico.intel
+export MODULEFILE=$PWD/ogstm/compilers/machine_modules/marconi.intel
 source $MODULEFILE
 
 
