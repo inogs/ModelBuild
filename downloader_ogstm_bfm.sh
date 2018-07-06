@@ -4,7 +4,7 @@
   BFM_version=BFMv2   #  BFMv2 or bfmv5
   BFM_RELEASE=branches/new_nutupt
 
- OGSTM_BRANCH=Somot
+ OGSTM_BRANCH=IscraB_Medsea
 
 SVN_USER=svnogs01  # user on https://hpc-forge.cineca.it/
 # ----------- BFM library ---------------------
