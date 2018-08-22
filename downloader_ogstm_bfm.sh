@@ -20,7 +20,7 @@ else
     # Requirement: to have an account on git server
     git clone git@github.com:CMCC-Foundation/BiogeochemicalFluxModel.git bfm
     cd bfm
-    git checkout -b dev origin/dev
+    git checkout -b dev_ogs origin/dev_ogs
 fi
 
 cd $OGSTM_HOME
