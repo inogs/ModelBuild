@@ -1,7 +1,7 @@
 #! /bin/bash
 
 
-  BFM_version=BFMv2   #  BFMv2 or bfmv5
+  BFM_version=bfmv5   #  BFMv2 or bfmv5
   BFM_RELEASE=branches/pl_mod 
 
  OGSTM_BRANCH=un24_omp_optimized
@@ -24,7 +24,6 @@ else
 fi
 
 cd $OGSTM_HOME
-#svn co --username $SVN_USER https://hpc-forge.cineca.it/svn/ogstm/${OGSTM_RELEASE} ogstm
 git clone git@gitlab.hpc.cineca.it:OGS/ogstm.git
 cd ogstm
 git checkout -b $OGSTM_BRANCH origin/$OGSTM_BRANCH
