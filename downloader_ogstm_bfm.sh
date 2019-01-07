@@ -19,5 +19,9 @@ git checkout -b dev_ogs origin/dev_ogs
 cd $OGSTM_HOME
 git clone git@gitlab.hpc.cineca.it:OGS/ogstm.git
 cd ogstm
-git checkout -b $OGSTM_BRANCH -b $OGSTM_BRANCH
+git checkout -b $OGSTM_BRANCH  origin/$OGSTM_BRANCH
 
+cd $OGSTM_HOME
+git clone git@gitlab.hpc.cineca.it:OGS/3DVar.git
+cd 3DVar
+git checkout -b $VAR3D_BRANCH origin/$VAR3D_BRANCH
