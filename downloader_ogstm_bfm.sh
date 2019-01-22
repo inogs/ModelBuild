@@ -4,12 +4,14 @@
   BFM_version=bfmv5   #  BFMv2 or bfmv5
   BFM_BRANCH=dev_ogs
 
- OGSTM_BRANCH=bc_refactoring
+ OGSTM_BRANCH=seik
  VAR3D_BRANCH=WithVb
 
 # ----------- BFM library ---------------------
 
 OGSTM_HOME=$PWD
+
+git clone git@gitlab.hpc.cineca.it:OGS/seik.git 
 
 # Requirement: to have an account on git server
 git clone git@github.com:CMCC-Foundation/BiogeochemicalFluxModel.git bfm
