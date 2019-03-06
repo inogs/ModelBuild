@@ -34,7 +34,7 @@ export OPENMP_FLAG=          # OpenMP deactivated
 # Warning : this choice must be consistent with Section 1. 
 
 # Just comment the two following lines you are not using modules. 
-export MODULEFILE=$PWD/ogstm/compilers/machine_modules/marconi.intel
+export MODULEFILE=$PWD/ogstm/compilers/machine_modules/galileo.intel
 source $MODULEFILE
 
 
@@ -134,15 +134,24 @@ CMAKE=1
 cd $OGSTMDIR/..
 if [ $CMAKE -eq 1 ] ; then
   # ------------ new OGSTM builder based on cmake -----------------
-
+        if [[ $DEBUG == .dbg ]] ; then
+           CMAKE_BUILD_TYPE=Debug
+           OGSTM_BLD_DIR=OGSTM_BUILD_DBG
+        else
+           CMAKE_BUILD_TYPE=Release
+           OGSTM_BLD_DIR=OGSTM_BUILD
+        fi
 	export BFM_INCLUDE=$BFM_INC
 	export BFM_LIBRARY=$BFM_LIB
-	export NETCDFF_LIB=$NETCDFF_LIB/libnetcdff.so
-	export NETCDF_LIB=$NETCDF_LIB/libnetcdf.so
+
 	
-	OGSTM_BLD_DIR=OGSTM_BUILD
 	mkdir -p $OGSTM_BLD_DIR
 	cd $OGSTM_BLD_DIR
+
+
+    CMAKE_COMMONS=" -DCMAKE_VERBOSE_MAKEFILE=ON -DMPI_Fortran_COMPILER=mpiifort -DCMAKE_C_COMPILER=icc -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} "
+    CMAKE_COMMONS+=" -DNETCDF_INCLUDES_C=$NETCDF_INC -DNETCDF_LIBRARIES_C=$NETCDF_LIB/libnetcdf.so -DNETCDFF_INCLUDES_F90=$NETCDFF_INC -DNETCDFF_LIBRARIES_F90=$NETCDFF_LIB/libnetcdff.so"
+    CMAKE_COMMONS+=" -D${BFMversion}=ON"
 
 	if [ $OCEANVAR == true ] ; then
 	    export DA_INCLUDE=$DA_INC
@@ -150,20 +159,15 @@ if [ $CMAKE -eq 1 ] ; then
 	    export PETSC_LIB=$PETSC_LIB/libpetsc.so
 
 	    cp ../ogstm/DataAssimilation.cmake ../ogstm/CMakeLists.txt
-
-	    cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DMPI_Fortran_COMPILER=mpiifort -DCMAKE_C_COMPILER=icc -DCMAKE_BUILD_TYPE=Release ../ogstm/ -DNETCDF_INCLUDES_C=$NETCDF_INC -DNETCDF_LIBRARIES_C=$NETCDF_LIB -DNETCDFF_INCLUDES_F90=$NETCDFF_INC -DNETCDFF_LIBRARIES_F90=$NETCDFF_LIB -DPETSC_LIBRARIES=$PETSC_LIB -DPNETCDF_LIBRARIES=$PNETCDF_LIB/libpnetcdf.a
-
-	    make
+        cmake ../ogstm/ $CMAKE_COMMONS -DPETSC_LIBRARIES=$PETSC_LIB -DPNETCDF_LIBRARIES=$PNETCDF_LIB/libpnetcdf.a
 
 	else
-
 	    cp ../ogstm/GeneralCmake.cmake ../ogstm/CMakeLists.txt
-
-	    cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DMPI_Fortran_COMPILER=mpiifort -DCMAKE_C_COMPILER=icc -DCMAKE_BUILD_TYPE=Release ../ogstm/ -DNETCDF_INCLUDES_C=$NETCDF_INC -DNETCDF_LIBRARIES_C=$NETCDF_LIB -DNETCDFF_INCLUDES_F90=$NETCDFF_INC -DNETCDFF_LIBRARIES_F90=$NETCDFF_LIB
+	    echo $CMAKE_COMMONS
+	    cmake ../ogstm/ $CMAKE_COMMONS
 	    
-	    make
 	fi
-
+    make
 else
 
   # ----------- standard OGSTM builder -----------------
