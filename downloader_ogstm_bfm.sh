@@ -4,7 +4,7 @@
   BFM_version=bfmv5   #  BFMv2 or bfmv5
   BFM_BRANCH=dev_ogs
 
- OGSTM_BRANCH=bc_refactoring
+ OGSTM_BRANCH=master
  VAR3D_BRANCH=WithVb
 
 # ----------- BFM library ---------------------
@@ -18,8 +18,8 @@ git checkout -b dev_ogs origin/dev_ogs
 
 cd $OGSTM_HOME
 git clone git@gitlab.hpc.cineca.it:OGS/ogstm.git
-cd ogstm
-git checkout -b $OGSTM_BRANCH  origin/$OGSTM_BRANCH
+#cd ogstm
+#git checkout -b $OGSTM_BRANCH  origin/$OGSTM_BRANCH
 
 cd $OGSTM_HOME
 git clone git@gitlab.hpc.cineca.it:OGS/3DVar.git
