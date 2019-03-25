@@ -4,7 +4,7 @@
   BFM_version=bfmv5   #  BFMv2 or bfmv5
   BFM_BRANCH=dev_ogs
 
- OGSTM_BRANCH=master
+ OGSTM_BRANCH=coupler
  VAR3D_BRANCH=WithVb
 
 # ----------- BFM library ---------------------
@@ -17,11 +17,6 @@ cd bfm
 git checkout -b dev_ogs origin/dev_ogs
 
 cd $OGSTM_HOME
-git clone git@gitlab.hpc.cineca.it:OGS/ogstm.git
-#cd ogstm
-#git checkout -b $OGSTM_BRANCH  origin/$OGSTM_BRANCH
+git clone git@github.com:gcossarini/BFMCOUPLER.git
 
-cd $OGSTM_HOME
-git clone git@gitlab.hpc.cineca.it:OGS/3DVar.git
-cd 3DVar
-git checkout -b $VAR3D_BRANCH origin/$VAR3D_BRANCH
+# now download MITgcm

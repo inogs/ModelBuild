@@ -39,17 +39,6 @@ source $MODULEFILE
 
 
 
-###################################################################
-# Section 4.  Oceanvar inclusion in model
-# Set OCEANVAR=true         to include oceanvar.
-#     DEBUG_OCEANVAR=.dbg   to use debug flags
-
-OCEANVAR=true
-DEBUG_OCEANVAR=
-###################################################################
-
-
-
 
 usage() {
 echo "SYNOPSYS"
@@ -80,18 +69,6 @@ fi
 
 
 
-
-# -------------- 3d_var _____
-if [ $OCEANVAR == true ] ; then
-   cd 3DVar
-   INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${OGSTM_COMPILER}${DEBUG_OCEANVAR}.inc
-   cp $INC_FILE compiler.inc
-   # make clean
-   gmake
-   if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
-   export DA_INC=$PWD
-   echo DA_INC= $DA_INC
-fi
 
 # ----------- BFM library ---------------------
 cd $BFMDIR
@@ -128,6 +105,10 @@ fi
 export BFM_INC=${BFMDIR}/include
 export BFM_LIB=${BFMDIR}/lib
 
+
+
+
+exit 0
 
 CMAKE=1
 
