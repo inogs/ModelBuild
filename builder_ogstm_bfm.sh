@@ -66,7 +66,7 @@ fi
 
 
 
-
+cp pkg_groups MITgmc/pkg/pkg_groups
 
 
 
