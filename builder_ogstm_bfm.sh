@@ -128,6 +128,9 @@ else
    INPUTDIR=tmp/OGS_PELAGIC/ORIG
    OUTDIR=tmp/OGS_PELAGIC/REDUCED
    mkdir -p $INPUTDIR $OUTDIR
+   cp ../include/BFM_var_list.h $INPUTDIR
+   cp ../src/ogstm/BFM1D_Output_Ecology.F90 $INPUTDIR
+
    xmlfile=${OGSTMDIR}/bfmv5/BFMtab.xml
    python generated_bfmfiles_reducer.py -i $INPUTDIR -o $OUTDIR -f $xmlfile
    if [ $? -ne 0 ] ; then  echo  ERROR in reduction; exit 1 ; fi
