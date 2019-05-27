@@ -41,10 +41,10 @@ source $MODULEFILE
 
 ###################################################################
 # Section 4.  Oceanvar inclusion in model
-# Set OCEANVAR=false         to include oceanvar.
+# Set OCEANVAR=true         to include oceanvar.
 #     DEBUG_OCEANVAR=.dbg   to use debug flags
 
-OCEANVAR=true
+OCEANVAR=false
 DEBUG_OCEANVAR=
 ###################################################################
 
