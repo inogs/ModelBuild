@@ -34,7 +34,7 @@ export OPENMP_FLAG=          # OpenMP deactivated
 # Warning : this choice must be consistent with Section 1. 
 
 # Just comment the two following lines you are not using modules. 
-export MODULEFILE=$PWD/ogstm/compilers/machine_modules/pico.intel
+export MODULEFILE=$PWD/ogstm/compilers/machine_modules/galileo.intel
 source $MODULEFILE
 
 
@@ -44,7 +44,7 @@ source $MODULEFILE
 # Set OCEANVAR=true         to include oceanvar.
 #     DEBUG_OCEANVAR=.dbg   to use debug flags
 
-OCEANVAR=false
+OCEANVAR=true
 DEBUG_OCEANVAR=
 ###################################################################
 
@@ -121,8 +121,25 @@ else
    # in-place replace the entire ARCH line
    sed -i "s/.*ARCH.*/        ARCH    = '$INC_FILE'  /"  build/configurations/OGS_PELAGIC/configuration
    cd $BFMDIR/build
-   ./bfm_configure.sh -gc -o ../lib/libbfm.a -p OGS_PELAGIC
-   if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
+   ./bfm_configure.sh -gv -o ../lib/libbfm.a -p OGS_PELAGIC
+
+   if [ $? -ne 0 ] ; then  echo  ERROR in code generation; exit 1 ; fi
+
+   INPUTDIR=tmp/OGS_PELAGIC/ORIG
+   OUTDIR=tmp/OGS_PELAGIC/REDUCED
+   mkdir -p $INPUTDIR $OUTDIR
+   cp ../include/BFM_var_list.h $INPUTDIR
+   cp ../src/ogstm/BFM1D_Output_Ecology.F90 $INPUTDIR
+
+   xmlfile=${OGSTMDIR}/bfmv5/BFMtab.xml
+   python generated_bfmfiles_reducer.py -i $INPUTDIR -o $OUTDIR -f $xmlfile
+   if [ $? -ne 0 ] ; then  echo  ERROR in reduction; exit 1 ; fi
+   cp $OUTDIR/BFM_var_list.h ../include/
+   cp $OUTDIR/BFM1D_Output_Ecology.F90  ../src/ogstm/
+   cp $OUTDIR/BFM1D_Output_Ecology.F90 tmp/OGS_PELAGIC/
+
+   ./bfm_configure.sh -cv -o ../lib/libbfm.a -p OGS_PELAGIC
+   if [ $? -ne 0 ] ; then  echo compiling ERROR; exit 1 ; fi
 fi
 
 export BFM_INC=${BFMDIR}/include
@@ -143,11 +160,15 @@ if [ $CMAKE -eq 1 ] ; then
         fi
 	export BFM_INCLUDE=$BFM_INC
 	export BFM_LIBRARY=$BFM_LIB
-	export NETCDFF_LIB=$NETCDFF_LIB/libnetcdff.so
-	export NETCDF_LIB=$NETCDF_LIB/libnetcdf.so
+
 	
 	mkdir -p $OGSTM_BLD_DIR
 	cd $OGSTM_BLD_DIR
+
+
+    CMAKE_COMMONS=" -DCMAKE_VERBOSE_MAKEFILE=ON -DMPI_Fortran_COMPILER=mpiifort -DCMAKE_C_COMPILER=icc -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} "
+    CMAKE_COMMONS+=" -DNETCDF_INCLUDES_C=$NETCDF_INC -DNETCDF_LIBRARIES_C=$NETCDF_LIB/libnetcdf.so -DNETCDFF_INCLUDES_F90=$NETCDFF_INC -DNETCDFF_LIBRARIES_F90=$NETCDFF_LIB/libnetcdff.so"
+    CMAKE_COMMONS+=" -D${BFMversion}=ON"
 
 	if [ $OCEANVAR == true ] ; then
 	    export DA_INCLUDE=$DA_INC
@@ -155,20 +176,15 @@ if [ $CMAKE -eq 1 ] ; then
 	    export PETSC_LIB=$PETSC_LIB/libpetsc.so
 
 	    cp ../ogstm/DataAssimilation.cmake ../ogstm/CMakeLists.txt
-
-	    cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DMPI_Fortran_COMPILER=mpiifort -DCMAKE_C_COMPILER=icc -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ../ogstm/ -DNETCDF_INCLUDES_C=$NETCDF_INC -DNETCDF_LIBRARIES_C=$NETCDF_LIB -DNETCDFF_INCLUDES_F90=$NETCDFF_INC -DNETCDFF_LIBRARIES_F90=$NETCDFF_LIB -DPETSC_LIBRARIES=$PETSC_LIB -DPNETCDF_LIBRARIES=$PNETCDF_LIB/libpnetcdf.a
-
-	    make
+        cmake ../ogstm/ $CMAKE_COMMONS -DPETSC_LIBRARIES=$PETSC_LIB -DPNETCDF_LIBRARIES=$PNETCDF_LIB/libpnetcdf.a
 
 	else
-
 	    cp ../ogstm/GeneralCmake.cmake ../ogstm/CMakeLists.txt
-
-	    cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DMPI_Fortran_COMPILER=mpiifort -DCMAKE_C_COMPILER=icc -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ../ogstm/ -DNETCDF_INCLUDES_C=$NETCDF_INC -DNETCDF_LIBRARIES_C=$NETCDF_LIB -DNETCDFF_INCLUDES_F90=$NETCDFF_INC -DNETCDFF_LIBRARIES_F90=$NETCDFF_LIB
+	    echo $CMAKE_COMMONS
+	    cmake ../ogstm/ $CMAKE_COMMONS
 	    
-	    make
 	fi
-
+    make
 else
 
   # ----------- standard OGSTM builder -----------------
