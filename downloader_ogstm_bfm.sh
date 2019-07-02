@@ -1,8 +1,7 @@
 #! /bin/bash
 
 
-  BFM_version=BFMv2   #  BFMv2 or bfmv5
-  BFM_RELEASE=branches/pl_mod 
+  BFM_version=bfmv5   #  BFMv2 or bfmv5
 
  OGSTM_BRANCH=Multivariate
  VAR3D_BRANCH=Multivariate
@@ -20,17 +19,15 @@ else
     # Requirement: to have an account on git server
     git clone git@github.com:CMCC-Foundation/BiogeochemicalFluxModel.git bfm
     cd bfm
-    git checkout -b dev origin/dev
+    git checkout -b dev_ogs origin/dev_ogs
 fi
 
 cd $OGSTM_HOME
-#svn co --username $SVN_USER https://hpc-forge.cineca.it/svn/ogstm/${OGSTM_RELEASE} ogstm
 git clone git@gitlab.hpc.cineca.it:OGS/ogstm.git
 cd ogstm
 git checkout -b $OGSTM_BRANCH origin/$OGSTM_BRANCH
 
 cd $OGSTM_HOME
-# svn co https://hpc-forge.cineca.it/svn/opa_rea/DA/src/3d_var 
 git clone git@gitlab.hpc.cineca.it:OGS/3DVar.git
 cd 3DVar
 git checkout -b $VAR3D_BRANCH origin/$VAR3D_BRANCH
