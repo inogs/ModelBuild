@@ -2,7 +2,7 @@
 
 
   BFM_version=bfmv5  #  BFMv2 or bfmv5
- OGSTM_BRANCH=IscraB_Medsea
+ OGSTM_BRANCH=bioptimod
 
 # ----------- BFM library ---------------------
 
