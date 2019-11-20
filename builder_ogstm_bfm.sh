@@ -121,25 +121,8 @@ else
    # in-place replace the entire ARCH line
    sed -i "s/.*ARCH.*/        ARCH    = '$INC_FILE'  /"  build/configurations/OGS_PELAGIC/configuration
    cd $BFMDIR/build
-   ./bfm_configure.sh -gv -o ../lib/libbfm.a -p OGS_PELAGIC
-
-   if [ $? -ne 0 ] ; then  echo  ERROR in code generation; exit 1 ; fi
-
-   INPUTDIR=tmp/OGS_PELAGIC/ORIG
-   OUTDIR=tmp/OGS_PELAGIC/REDUCED
-   mkdir -p $INPUTDIR $OUTDIR
-   cp ../include/BFM_var_list.h $INPUTDIR
-   cp ../src/ogstm/BFM1D_Output_Ecology.F90 $INPUTDIR
-
-   xmlfile=${OGSTMDIR}/bfmv5/BFMtab.xml
-   python generated_bfmfiles_reducer.py -i $INPUTDIR -o $OUTDIR -f $xmlfile
-   if [ $? -ne 0 ] ; then  echo  ERROR in reduction; exit 1 ; fi
-   cp $OUTDIR/BFM_var_list.h ../include/
-   cp $OUTDIR/BFM1D_Output_Ecology.F90  ../src/ogstm/
-   cp $OUTDIR/BFM1D_Output_Ecology.F90 tmp/OGS_PELAGIC/
-
-   ./bfm_configure.sh -cv -o ../lib/libbfm.a -p OGS_PELAGIC
-   if [ $? -ne 0 ] ; then  echo compiling ERROR; exit 1 ; fi
+   ./bfm_configure.sh -gcv -o ../lib/libbfm.a -p OGS_PELAGIC
+   if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
 fi
 
 export BFM_INC=${BFMDIR}/include
