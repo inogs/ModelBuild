@@ -2,10 +2,10 @@
 
 
   BFM_version=bfmv5   #  BFMv2 or bfmv5
-  BFM_RELEASE=ogs_release-5.0
+  BFM_RELEASE=ogs_release-5.0.1
 
- OGSTM_BRANCH=release-4.0
- VAR3D_BRANCH=release-3.3
+ OGSTM_BRANCH=release-4.2
+ VAR3D_BRANCH=release-4.0
 
 SVN_USER=svnogs01  # user on https://hpc-forge.cineca.it/
 # ----------- BFM library ---------------------

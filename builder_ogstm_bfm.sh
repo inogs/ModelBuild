@@ -121,7 +121,7 @@ else
    # in-place replace the entire ARCH line
    sed -i "s/.*ARCH.*/        ARCH    = '$INC_FILE'  /"  build/configurations/OGS_PELAGIC/configuration
    cd $BFMDIR/build
-   ./bfm_configure.sh -gc -o ../lib/libbfm.a -p OGS_PELAGIC
+   ./bfm_configure.sh -gcv -o ../lib/libbfm.a -p OGS_PELAGIC
    if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
 fi
 
