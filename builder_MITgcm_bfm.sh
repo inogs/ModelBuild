@@ -12,6 +12,11 @@
 #             In the following example user will select the file x86_64.LINUX.intel.dbg.inc
 #             both in bfm/compilers/ and ogstm/compilers 
 
+
+MIT_SIZE=190
+
+
+
 OGSTM_ARCH=x86_64
 OGSTM_OS=LINUX
 OGSTM_COMPILER=intel
@@ -39,7 +44,7 @@ source $MODULEFILE
 
 COUPLERDIR=$PWD/BFMCOUPLER
 BFMDIR=$PWD/bfm
-MITDIR=$PWD/MITgcm
+MITGCM_ROOT=$PWD/MITgcm
 
 cp pkg_groups MITgcm/pkg/pkg_groups
 
@@ -65,22 +70,14 @@ MYPRJ=CADEAU
 MITGCM_WORKDIR=/gpfs/scratch/userexternal/squerin0/test_operational/${MYPRJ}
 MYCODE=code_CADEAU_UWWTP
 MAKECPU=8
-
-####### root part #########################
-MITGCM_ROOT=/gpfs/scratch/userexternal/squerin0/test_operational/MITgcm_c66j  
 MITGCM_GNMK=${MITGCM_ROOT}/tools/genmake2
-###########################################
 
 
 ###### build part #######################
-#MITGCM_BLDOPT=linux_amd64_ifort11_test
-#MITGCM_BLDOPT=linux_amd64_ifort11_test_flag
 MITGCM_BLDOPT=linux_amd64_ifort11_test_galileo
 MITGCM_OF=/gpfs/scratch/userexternal/squerin0/test_operational/build_options/${MITGCM_BLDOPT} 
 
-# BUILD_DIR=${MITGCM_WORKDIR}/build_190p_BFM_CADEAU_test
 BUILD_DIR=${MITGCM_WORKDIR}/build_190p_BFM_CADEAU_test_flag_ALD
-# LOGDIR=${MITGCM_WORKDIR}/LOGS_190p
 LOGDIR=${MITGCM_WORKDIR}/LOGS_190p_flag_ALD
 #######################################################
 
@@ -88,19 +85,10 @@ LOGDIR=${MITGCM_WORKDIR}/LOGS_190p_flag_ALD
 ##### devel part ######################################
 MITGCM_CODE=/gpfs/scratch/userexternal/squerin0/test_operational/${MYCODE}
 
-echo "start compiling ..."
-module purge
-module load profile/advanced # aggiunto da Valeria il 16 luglio 2018
-module load autoload # su indicazione di Isabella
-module load intel/pe-xe-2018--binary
-module load intelmpi/2018--binary
-module load netcdff/4.4.4--intel--pe-xe-2018--binary
-module load gsl/2.5--intel--pe-xe-2018--binary
+echo "start MITgcm compiling ..."
 
-rm -rf $BUILD_DIR
-mkdir -p  $BUILD_DIR
-rm -rf $LOGDIR
-mkdir -p $LOGDIR
+rm -rf $BUILD_DIR $LOGDIR
+mkdir -p  $BUILD_DIR $LOGDIR
 
 echo "launching MITgcm genmake2 with project $MYPRJ and code $MITGCM_CODE and build_options $MITGCM_OF ..."
 cd $BUILD_DIR
