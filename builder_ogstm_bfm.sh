@@ -40,31 +40,6 @@ source $MODULEFILE
 
 
 
-usage() {
-echo "SYNOPSYS"
-echo "Build BFM and ogstm model"
-echo "builder_ogstm_bfm.sh [ BFMDIR ] [ OGSTMDIR ]"
-echo ""
-echo " Dirs have to be expressed as full paths "
-echo "EXAMPLE"
-echo " ./builder_ogstm_bfm.sh $PWD/bfm $PWD/ogstm "
-
-}
-
-if [ $# -eq 1 ] || [ $# -gt 2 ]; then
-   usage
-   exit 1
-fi
-
-if [ $# -eq 2 ] ; then
-   BFMDIR=$1
-   OGSTMDIR=$2
-else
-   BFMDIR=$PWD/bfm
-   OGSTMDIR=$PWD/ogstm
-fi
-
-
 
 cp pkg_groups MITgmc/pkg/pkg_groups
 
@@ -72,35 +47,12 @@ cp pkg_groups MITgmc/pkg/pkg_groups
 
 # ----------- BFM library ---------------------
 cd $BFMDIR
-A=`svn info 2>&1 `  # exit status 1 if bfmv5
-if [ $? == 0 ] ; then 
-   BFMversion=BFMv2
-else
-   BFMversion=bfmv5
-fi
+# in-place replace the entire ARCH line
+sed -i "s/.*ARCH.*/        ARCH    = '$INC_FILE'  /"  build/configurations/OGS_PELAGIC/configuration
+cd $BFMDIR/build
+./bfm_configure.sh -gvc -o ../lib/libbfm.a -p OGS_PELAGIC
+if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
 
-INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${OGSTM_COMPILER}${DEBUG}.inc
-
-if [ $BFMversion == BFMv2 ] ; then
-   cd ${BFMDIR}/compilers
-   cp $INC_FILE compiler.inc
-
-   ###################################################### just because R1.3 does not have include/
-   mkdir -p  ${BFMDIR}/include
-
-   cd ${BFMDIR}/build
-   ./config_BFM.sh -a ${OGSTM_ARCH} -c ogstm
-   cd BLD_OGSTMBFM
-   # make clean
-   gmake
-
-else
-   # in-place replace the entire ARCH line
-   sed -i "s/.*ARCH.*/        ARCH    = '$INC_FILE'  /"  build/configurations/OGS_PELAGIC/configuration
-   cd $BFMDIR/build
-   ./bfm_configure.sh -gc -o ../lib/libbfm.a -p OGS_PELAGIC
-   if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
-fi
 
 export BFM_INC=${BFMDIR}/include
 export BFM_LIB=${BFMDIR}/lib
