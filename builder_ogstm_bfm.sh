@@ -37,16 +37,17 @@ export OPENMP_FLAG=          # OpenMP deactivated
 export MODULEFILE=$PWD/galileo.intel
 source $MODULEFILE
 
+COUPLERDIR=$PWD/BFMCOUPLER
+BFMDIR=$PWD/bfm
+MITDIR=$PWD/MITgcm
 
-
-
-
-cp pkg_groups MITgmc/pkg/pkg_groups
+cp pkg_groups MITgcm/pkg/pkg_groups
 
 
 
 # ----------- BFM library ---------------------
 cd $BFMDIR
+INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${OGSTM_COMPILER}${DEBUG}.inc
 # in-place replace the entire ARCH line
 sed -i "s/.*ARCH.*/        ARCH    = '$INC_FILE'  /"  build/configurations/OGS_PELAGIC/configuration
 cd $BFMDIR/build
@@ -57,7 +58,8 @@ if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
 export BFM_INC=${BFMDIR}/include
 export BFM_LIB=${BFMDIR}/lib
 
-
+cd $COUPLERDIR
+python bfm_config_gen.py -i $BFMDIR/build/tmp/OGS_PELAGIC/namelist.passivetrc
 
 
 exit 0
