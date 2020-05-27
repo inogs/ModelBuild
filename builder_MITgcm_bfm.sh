@@ -17,9 +17,9 @@ MIT_SIZE=190
 
 
 
-OGSTM_ARCH=x86_64
-OGSTM_OS=LINUX
-OGSTM_COMPILER=intel
+MIT_ARCH=x86_64
+MIT_OS=LINUX
+MIT_COMPILER=intel
 DEBUG=       # this is the choice for production flags 
 #DEBUG=.dbg   # this is the one for debug flags
 
@@ -39,7 +39,7 @@ export OPENMP_FLAG=          # OpenMP deactivated
 # Warning : this choice must be consistent with Section 1. 
 
 # Just comment the two following lines you are not using modules. 
-export MODULEFILE=$PWD/galileo.intel
+export MODULEFILE=$PWD/compilers/machine_modules/galileo.intel
 source $MODULEFILE
 
 COUPLERDIR=$PWD/BFMCOUPLER
@@ -52,7 +52,7 @@ cp pkg_groups MITgcm/pkg/pkg_groups
 
 # ----------- BFM library ---------------------
 cd $BFMDIR
-INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${OGSTM_COMPILER}${DEBUG}.inc
+INC_FILE=${MIT_ARCH}.${MIT_OS}.${MIT_COMPILER}${DEBUG}.inc
 # in-place replace the entire ARCH line
 sed -i "s/.*ARCH.*/        ARCH    = '$INC_FILE'  /"  build/configurations/OGS_PELAGIC/configuration
 cd $BFMDIR/build
@@ -63,27 +63,20 @@ if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
 export BFM_INC=${BFMDIR}/include
 export BFM_LIB=${BFMDIR}/lib
 
-cd $COUPLERDIR
-python bfm_config_gen.py -i $BFMDIR/build/tmp/OGS_PELAGIC/namelist.passivetrc
-
-MYPRJ=CADEAU
-MITGCM_WORKDIR=/gpfs/scratch/userexternal/squerin0/test_operational/${MYPRJ}
-MYCODE=code_CADEAU_UWWTP
+MYCODE=$PWD/MYCODE
 MAKECPU=8
 MITGCM_GNMK=${MITGCM_ROOT}/tools/genmake2
 
 
 ###### build part #######################
-MITGCM_BLDOPT=linux_amd64_ifort11_test_galileo
-MITGCM_OF=/gpfs/scratch/userexternal/squerin0/test_operational/build_options/${MITGCM_BLDOPT} 
+MITGCM_OF=$PWD/compilers/$INC_FILE
 
-BUILD_DIR=${MITGCM_WORKDIR}/build_190p_BFM_CADEAU_test_flag_ALD
-LOGDIR=${MITGCM_WORKDIR}/LOGS_190p_flag_ALD
+BUILD_DIR=${PWD}/MITGCM_BUILD
+   LOGDIR=${PWD}/MITGCM_LOG
 #######################################################
 
 
 ##### devel part ######################################
-MITGCM_CODE=/gpfs/scratch/userexternal/squerin0/test_operational/${MYCODE}
 
 echo "start MITgcm compiling ..."
 
