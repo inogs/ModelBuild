@@ -1,6 +1,6 @@
 #! /bin/bash
 
-#         builder_ogstm_bfm.sh
+#         builder_MITgcm_bfm.sh
 
 #      Edit sections 1,2,3,4 in order to configure compilation and linking.
 
@@ -11,6 +11,28 @@
 #             most popular compilers (gnu, intel, xl) are provided.
 #             In the following example user will select the file x86_64.LINUX.intel.dbg.inc
 #             both in bfm/compilers/ and ogstm/compilers 
+
+usage() {
+echo "Builds MITgcm executable linked to BFM and the coupler"
+echo "SYNOPSYS"
+echo "builder_MITgcm_bfm.sh [ -o MODEL] "
+echo "MODEL can be bfm or MITgcm"
+echo ""
+}
+
+if [ $# -lt 2 ] ; then
+  usage
+  exit 1
+fi
+
+for I in 1 ; do
+   case $1 in
+      "-o" ) COMPILE_ONLY=$2;;
+        *  ) echo "Unrecognized option $1." ; usage;  exit 1;;
+   esac
+   shift 2
+done
+
 
 
 MIT_SIZE=190
@@ -46,9 +68,8 @@ COUPLERDIR=$PWD/BFMCOUPLER
 BFMDIR=$PWD/bfm
 MITGCM_ROOT=$PWD/MITgcm
 
-cp pkg_groups MITgcm/pkg/pkg_groups
 
-
+if [[ $COMPILE_ONLY == bfm ]] ; then
 
 # ----------- BFM library ---------------------
 cd $BFMDIR
@@ -59,6 +80,12 @@ cd $BFMDIR/build
 ./bfm_configure.sh -gvc -o ../lib/libbfm.a -p OGS_PELAGIC
 if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
 
+
+echo "Finish. BFM lib has been created "
+exit 0
+fi
+
+cp pkg_groups MITgcm/pkg/pkg_groups
 
 export BFM_INC=${BFMDIR}/include
 export BFM_LIB=${BFMDIR}/lib
