@@ -67,13 +67,12 @@ source $MODULEFILE
 COUPLERDIR=$PWD/BFMCOUPLER
 BFMDIR=$PWD/bfm
 MITGCM_ROOT=$PWD/MITgcm
-
+INC_FILE=${MIT_ARCH}.${MIT_OS}.${MIT_COMPILER}${DEBUG}.inc
 
 if [[ $COMPILE_ONLY == bfm ]] ; then
 
 # ----------- BFM library ---------------------
 cd $BFMDIR
-INC_FILE=${MIT_ARCH}.${MIT_OS}.${MIT_COMPILER}${DEBUG}.inc
 # in-place replace the entire ARCH line
 sed -i "s/.*ARCH.*/        ARCH    = '$INC_FILE'  /"  build/configurations/OGS_PELAGIC/configuration
 cd $BFMDIR/build
@@ -90,6 +89,7 @@ cp pkg_groups MITgcm/pkg/pkg_groups
 export BFM_INC=${BFMDIR}/include
 export BFM_LIB=${BFMDIR}/lib
 
+mkdir -p ${MITGCM_ROOT}/pkg/BFMcoupler
 MYCODE=$PWD/MYCODE
 MAKECPU=8
 MITGCM_GNMK=${MITGCM_ROOT}/tools/genmake2
@@ -110,10 +110,10 @@ echo "start MITgcm compiling ..."
 rm -rf $BUILD_DIR $LOGDIR
 mkdir -p  $BUILD_DIR $LOGDIR
 
-echo "launching MITgcm genmake2 with project $MYPRJ and code $MITGCM_CODE and build_options $MITGCM_OF ..."
+echo "launching MITgcm genmake2 with customized code in $MYCODE and build_options $MITGCM_OF ..."
 cd $BUILD_DIR
 
-${MITGCM_GNMK} -mpi -gsl -of=${MITGCM_OF} -rootdir=${MITGCM_ROOT} -mods=${MITGCM_CODE} > $LOGDIR/genmake2.log 2>$LOGDIR/genmake2.err
+${MITGCM_GNMK} -mpi -gsl -of=${MITGCM_OF} -rootdir=${MITGCM_ROOT} -mods=${MYCODE} > $LOGDIR/genmake2.log 2>$LOGDIR/genmake2.err
 
 ANS=$?
 echo genmake2 exit status : $ANS
@@ -126,7 +126,7 @@ echo make depend exit status : $ANS
 if [ $ANS -ne 0 ] ; then echo "ERROR " ; exit 1 ; fi
 
 echo "launching project compilation ..."
-make -j $MAKECPU > $LOGDIR/make.log 2> $LOGDIR/make.err 
+make -j $MAKECPU > $LOGDIR/make.log 2>&1  #$LOGDIR/make.err 
 ANS=$?
 echo make exit status : $ANS
 if [ $ANS -ne 0 ] ; then echo "ERROR " ; exit 1 ; fi
