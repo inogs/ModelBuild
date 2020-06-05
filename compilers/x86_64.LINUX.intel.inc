@@ -31,7 +31,7 @@ else
     PROCF=-xHost
 fi
 
-FFLAGS="$FFLAGS -m64 -fPIC -assume byterecl -mcmodel=large -shared-intel"
+FFLAGS="$FFLAGS -m64 -fPIC -assume byterecl -mcmodel=large -shared-intel -extend_source "
 
 
 if test "x$IEEE" = x ; then     #- with optimisation:
