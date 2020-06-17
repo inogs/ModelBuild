@@ -77,7 +77,8 @@ cd $BFMDIR/build
 if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
 
 cd $BFMDIR/include
-awk '{print "  "$0}' BFM_var_list.h > BFM_var_list.h
+awk '{print "  "$0}' BFM_var_list.h > BFM_var_list.h.tmp
+mv BFM_var_list.h.tmp BFM_var_list.h
 echo "Finish. BFM lib has been created "
 exit 0
 fi
