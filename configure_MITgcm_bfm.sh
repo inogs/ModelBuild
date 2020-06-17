@@ -29,7 +29,7 @@ mkdir -p $MYCODE $NAMELISTS
 [[ -f $MYCODE/DIAGNOSTICS_SIZE.h ]] ||  cp MITgcm/pkg/diagnostics/DIAGNOSTICS_SIZE.h $MYCODE
 
 ########  copying from preset #############
-cp $PWD/preset/${PRESET}/*.h $MYCODE
+cp $PWD/presets/${PRESET}/*.h $MYCODE
 
 echo "Now edit and configure your setup in $MYCODE/"
 

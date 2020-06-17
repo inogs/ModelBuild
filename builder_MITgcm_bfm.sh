@@ -76,7 +76,8 @@ cd $BFMDIR/build
 ./bfm_configure.sh -gvc -o ../lib/libbfm.a -p OGS_PELAGIC
 if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
 
-awk '{print "  "$0}' include/BFM_var_list.h > include/BFM_var_list.h
+cd $BFMDIR/include
+awk '{print "  "$0}' BFM_var_list.h > BFM_var_list.h
 echo "Finish. BFM lib has been created "
 exit 0
 fi
