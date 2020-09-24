@@ -25,9 +25,6 @@ fi
 
 cd $OGSTM_HOME
 git clone git@gitlab.hpc.cineca.it:OGS/ogstm.git
+cd ogstm
+git checkout timestep
 
-
-cd $OGSTM_HOME
-git clone git@gitlab.hpc.cineca.it:OGS/3DVar.git
-cd 3DVar
-git checkout -b $VAR3D_BRANCH origin/$VAR3D_BRANCH
