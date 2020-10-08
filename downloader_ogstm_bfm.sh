@@ -3,7 +3,7 @@
 
   BFM_version=bfmv5   #  BFMv2 or bfmv5
 
- OGSTM_BRANCH=Multivariate
+ OGSTM_BRANCH=MultiVariate_gdept3d
  VAR3D_BRANCH=Multivariate
 
 SVN_USER=svnogs01  # user on https://hpc-forge.cineca.it/
