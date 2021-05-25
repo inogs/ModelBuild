@@ -24,7 +24,7 @@ else
 fi
 
 cd $OGSTM_HOME
-git clone git@gitlab.hpc.cineca.it:OGS/ogstm.git
+git clone git@github.com:inogs/ogstm.git
 
 
 cd $OGSTM_HOME
