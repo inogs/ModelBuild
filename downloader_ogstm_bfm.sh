@@ -12,6 +12,6 @@ cd bfm
 git checkout -b dev_ogs_IscraB_Medsea origin/dev_ogs_IscraB_Medsea
 
 cd $OGSTM_HOME
-git clone git@gitlab.hpc.cineca.it:OGS/ogstm.git
+git clone git@github.com:inogs/ogstm.git
 cd ogstm
 git checkout -b $OGSTM_BRANCH origin/$OGSTM_BRANCH
