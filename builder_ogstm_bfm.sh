@@ -34,9 +34,8 @@ export OPENMP_FLAG=          # OpenMP deactivated
 # Warning : this choice must be consistent with Section 1. 
 
 # Just comment the two following lines you are not using modules. 
-export MODULEFILE=$PWD/ogstm/compilers/machine_modules/galileo.intel
+export MODULEFILE=$PWD/ogstm/compilers/machine_modules/g100.intel
 source $MODULEFILE
-
 
 
 ###################################################################
@@ -196,7 +195,7 @@ mkdir -p ${OGSTMDIR}/ready_for_model_namelists/
 if [ $BFMversion == bfmv5 ] ; then
    cp ${BFMDIR}/build/tmp/OGS_PELAGIC/namelist.passivetrc ${OGSTMDIR}/bfmv5/
    cd ${OGSTMDIR}/bfmv5/
-   python ogstm_namelist_gen.py #generates namelist.passivetrc_new
+   python2 ogstm_namelist_gen.py #generates namelist.passivetrc_new
 
    cp ${OGSTMDIR}/src/namelists/namelist*    ${OGSTMDIR}/ready_for_model_namelists/ 
    cp namelist.passivetrc_new                ${OGSTMDIR}/ready_for_model_namelists/namelist.passivetrc #overwriting
