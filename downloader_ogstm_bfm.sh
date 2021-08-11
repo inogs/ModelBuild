@@ -5,7 +5,7 @@
   BFM_RELEASE=branches/pl_mod 
 
  OGSTM_BRANCH=master
- VAR3D_BRANCH=WithVb
+ VAR3D_BRANCH=Multivariate
 
 SVN_USER=svnogs01  # user on https://hpc-forge.cineca.it/
 # ----------- BFM library ---------------------
