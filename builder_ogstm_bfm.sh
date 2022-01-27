@@ -147,8 +147,11 @@ if [ $CMAKE -eq 1 ] ; then
 	mkdir -p $OGSTM_BLD_DIR
 	cd $OGSTM_BLD_DIR
 
-
+    if [ $OGSTM_COMPILER == intel ] ; then
     CMAKE_COMMONS=" -DCMAKE_VERBOSE_MAKEFILE=ON -DMPI_Fortran_COMPILER=mpiifort -DCMAKE_C_COMPILER=icc -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} "
+    else
+    CMAKE_COMMONS=" -DCMAKE_VERBOSE_MAKEFILE=ON -DMPI_Fortran_COMPILER=mpif90 -DCMAKE_C_COMPILER=gcc -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} "
+    fi
     CMAKE_COMMONS+=" -DNETCDF_INCLUDES_C=$NETCDF_INC -DNETCDF_LIBRARIES_C=$NETCDF_LIB/libnetcdf.so -DNETCDFF_INCLUDES_F90=$NETCDFF_INC -DNETCDFF_LIBRARIES_F90=$NETCDFF_LIB/libnetcdff.so"
     CMAKE_COMMONS+=" -D${BFMversion}=ON"
 
@@ -195,7 +198,7 @@ mkdir -p ${OGSTMDIR}/ready_for_model_namelists/
 if [ $BFMversion == bfmv5 ] ; then
    cp ${BFMDIR}/build/tmp/OGS_PELAGIC/namelist.passivetrc ${OGSTMDIR}/bfmv5/
    cd ${OGSTMDIR}/bfmv5/
-   python2 ogstm_namelist_gen.py #generates namelist.passivetrc_new
+   python ogstm_namelist_gen.py #generates namelist.passivetrc_new
 
    cp ${OGSTMDIR}/src/namelists/namelist*    ${OGSTMDIR}/ready_for_model_namelists/ 
    cp namelist.passivetrc_new                ${OGSTMDIR}/ready_for_model_namelists/namelist.passivetrc #overwriting
