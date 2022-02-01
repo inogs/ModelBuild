@@ -4,8 +4,8 @@
   BFM_version=bfmv5   #  BFMv2 or bfmv5
   BFM_RELEASE=branches/pl_mod 
 
- OGSTM_BRANCH=master
- VAR3D_BRANCH=Multivariate
+ OGSTM_BRANCH=OxyDA
+ VAR3D_BRANCH=MultiOxy
 
 SVN_USER=svnogs01  # user on https://hpc-forge.cineca.it/
 # ----------- BFM library ---------------------
@@ -25,9 +25,12 @@ fi
 
 cd $OGSTM_HOME
 git clone git@github.com:inogs/ogstm.git
+cd ogstm
+git checkout MultiOxy
 
 
 cd $OGSTM_HOME
 git clone git@gitlab.hpc.cineca.it:OGS/3DVar.git
 cd 3DVar
 git checkout -b $VAR3D_BRANCH origin/$VAR3D_BRANCH
+
