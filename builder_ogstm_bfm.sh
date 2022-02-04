@@ -198,7 +198,7 @@ mkdir -p ${OGSTMDIR}/ready_for_model_namelists/
 if [ $BFMversion == bfmv5 ] ; then
    cp ${BFMDIR}/build/tmp/OGS_PELAGIC/namelist.passivetrc ${OGSTMDIR}/bfmv5/
    cd ${OGSTMDIR}/bfmv5/
-   python ogstm_namelist_gen.py #generates namelist.passivetrc_new
+   ./ogstm_namelist_gen.py #generates namelist.passivetrc_new
 
    cp ${OGSTMDIR}/src/namelists/namelist*    ${OGSTMDIR}/ready_for_model_namelists/ 
    cp namelist.passivetrc_new                ${OGSTMDIR}/ready_for_model_namelists/namelist.passivetrc #overwriting
