@@ -188,23 +188,3 @@ else
 
 fi
 
-
-if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
-
-### OGSTM NAMELIST GENERATION (also by Frequency Control )
-
-mkdir -p ${OGSTMDIR}/ready_for_model_namelists/
-
-if [ $BFMversion == bfmv5 ] ; then
-   cp ${BFMDIR}/build/tmp/OGS_PELAGIC/namelist.passivetrc ${OGSTMDIR}/bfmv5/
-   cd ${OGSTMDIR}/bfmv5/
-   ./ogstm_namelist_gen.py #generates namelist.passivetrc_new
-
-   cp ${OGSTMDIR}/src/namelists/namelist*    ${OGSTMDIR}/ready_for_model_namelists/ 
-   cp namelist.passivetrc_new                ${OGSTMDIR}/ready_for_model_namelists/namelist.passivetrc #overwriting
-   cp ${BFMDIR}/build/tmp/OGS_PELAGIC/*.nml  ${OGSTMDIR}/ready_for_model_namelists/
-else
-   #V2
-   cp ${OGSTMDIR}/src/namelists/namelist*    ${OGSTMDIR}/ready_for_model_namelists/
-   cp ${BFMDIR}/src/namelist/*.nml           ${OGSTMDIR}/ready_for_model_namelists/
-fi
