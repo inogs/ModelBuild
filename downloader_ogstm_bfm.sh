@@ -19,6 +19,9 @@ git clone git@github.com:inogs/ogstm.git
 cd ogstm
 git checkout $OGSTM_BRANCH
 
+cd $OGSTM_HOME
+git clone git@github.com:BIOPTIMOD/Forward_Adjoint.git
+
 exit 0
 
 cd $OGSTM_HOME
