@@ -14,7 +14,7 @@
 
 OGSTM_ARCH=x86_64
 OGSTM_OS=LINUX
-OGSTM_COMPILER=intel
+OGSTM_COMPILER=gfortran
 DEBUG=       # this is the choice for production flags 
 #DEBUG=.dbg   # this is the one for debug flags
 
@@ -34,7 +34,7 @@ export OPENMP_FLAG=          # OpenMP deactivated
 # Warning : this choice must be consistent with Section 1. 
 
 # Just comment the two following lines you are not using modules. 
-export MODULEFILE=$PWD/ogstm/compilers/machine_modules/g100.intel
+export MODULEFILE=$PWD/ogstm/compilers/machine_modules/m100.gnu
 source $MODULEFILE
 
 
@@ -75,9 +75,7 @@ else
 fi
 
 
-
-
-
+BOPTIMOD_3STREAM_DIR=$PWD/Forward_Adjoint
 
 
 # -------------- 3d_var _____
@@ -127,6 +125,9 @@ fi
 export BFM_INC=${BFMDIR}/include
 export BFM_LIB=${BFMDIR}/lib
 
+export BOPTIMOD_3STREAM_INC=$BOPTIMOD_3STREAM_DIR/include
+export BOPTIMOD_3STREAM_LIB=$BOPTIMOD_3STREAM_DIR/lib
+
 
 CMAKE=1
 
@@ -142,6 +143,8 @@ if [ $CMAKE -eq 1 ] ; then
         fi
 	export BFM_INCLUDE=$BFM_INC
 	export BFM_LIBRARY=$BFM_LIB
+	export BIOPTIMOD_3STREAM_INCLUDE=$BOPTIMOD_3STREAM_INC
+	export BIOPTIMOD_3STREAM_LIBRARY=$BOPTIMOD_3STREAM_LIB
 
 	
 	mkdir -p $OGSTM_BLD_DIR
@@ -188,3 +191,22 @@ else
 
 fi
 
+if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
+
+### OGSTM NAMELIST GENERATION (also by Frequency Control )
+
+mkdir -p ${OGSTMDIR}/ready_for_model_namelists/
+
+if [ $BFMversion == bfmv5 ] ; then
+   cp ${BFMDIR}/build/tmp/OGS_PELAGIC/namelist.passivetrc ${OGSTMDIR}/bfmv5/
+   cd ${OGSTMDIR}/bfmv5/
+#  python2 ./ogstm_namelist_gen.py #generates namelist.passivetrc_new
+
+   cp ${OGSTMDIR}/src/namelists/namelist*    ${OGSTMDIR}/ready_for_model_namelists/
+   cp namelist.passivetrc_new                ${OGSTMDIR}/ready_for_model_namelists/namelist.passivetrc #overwriting
+   cp ${BFMDIR}/build/tmp/OGS_PELAGIC/*.nml  ${OGSTMDIR}/ready_for_model_namelists/
+else
+   #V2
+   cp ${OGSTMDIR}/src/namelists/namelist*    ${OGSTMDIR}/ready_for_model_namelists/
+   cp ${BFMDIR}/src/namelist/*.nml           ${OGSTMDIR}/ready_for_model_namelists/
+fi
