@@ -11,7 +11,7 @@ OGSTM_HOME=$PWD
 # Requirement: to have an account on git server
 git clone git@github.com:CMCC-Foundation/BiogeochemicalFluxModel.git bfm
 cd bfm
-git checkout -b dev_ogs origin/dev_ogs
+git checkout -b dev_ogs origin/dev_ESiWACE
 
 cd $OGSTM_HOME
 git clone git@github.com:inogs/ogstm.git
