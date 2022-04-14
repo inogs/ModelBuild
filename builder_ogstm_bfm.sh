@@ -8,7 +8,7 @@
 #  Section 1. Choose the *.inc file, with the definition of compiler flags, to be included in Makefile
 #             
 #             This is a machine dependent operation, flags for
-#             most popular compilers (gnu, intel, xl) are provided.
+#             most popular compilers (gnu, intel, xl, nvhpc) are provided.
 #             In the following example user will select the file x86_64.LINUX.intel.dbg.inc
 #             both in bfm/compilers/ and ogstm/compilers 
 
@@ -118,7 +118,7 @@ if [ $BFMversion == BFMv2 ] ; then
 
 else
    # in-place replace the entire ARCH line
-   sed -i "s/.*ARCH.*/        ARCH    = '$INC_FILE'  /"  build/configurations/OGS_PELAGIC/configuration
+   sed -i "s/.*ARCH.*/        ARCH    = '$INC_FILE'/"  build/configurations/OGS_PELAGIC/configuration
    cd $BFMDIR/build
    ./bfm_configure.sh -gcv -o ../lib/libbfm.a -p OGS_PELAGIC
    if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
@@ -149,8 +149,8 @@ if [ $CMAKE -eq 1 ] ; then
 
     if [ $OGSTM_COMPILER == intel ] ; then
     CMAKE_COMMONS=" -DCMAKE_VERBOSE_MAKEFILE=ON -DMPI_Fortran_COMPILER=mpiifort -DCMAKE_C_COMPILER=icc -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} "
-    else
-    CMAKE_COMMONS=" -DCMAKE_VERBOSE_MAKEFILE=ON -DMPI_Fortran_COMPILER=mpif90 -DCMAKE_C_COMPILER=gcc -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} "
+    elif [ $OGSTM_COMPILER == nvhpc ] ; then
+    CMAKE_COMMONS=" -DCMAKE_VERBOSE_MAKEFILE=ON -DMPI_Fortran_COMPILER=mpif90 -DCMAKE_C_COMPILER=nvc -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_EXPORT_COMPILE_COMMANDS=1 "
     fi
     CMAKE_COMMONS+=" -DNETCDF_INCLUDES_C=$NETCDF_INC -DNETCDF_LIBRARIES_C=$NETCDF_LIB/libnetcdf.so -DNETCDFF_INCLUDES_F90=$NETCDFF_INC -DNETCDFF_LIBRARIES_F90=$NETCDFF_LIB/libnetcdff.so"
     CMAKE_COMMONS+=" -D${BFMversion}=ON"
