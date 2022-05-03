@@ -72,10 +72,12 @@ if [ $# -eq 2 ] ; then
 else
    BFMDIR=$PWD/bfm
    OGSTMDIR=$PWD/ogstm
+   BIOPTIMOD_3STREAM_DIR=$PWD/Forward_Adjoint
+   OASIM_DIR=$PWD/OASIM
 fi
 
 
-BOPTIMOD_3STREAM_DIR=$PWD/Forward_Adjoint
+
 
 
 # -------------- 3d_var _____
@@ -125,8 +127,41 @@ fi
 export BFM_INC=${BFMDIR}/include
 export BFM_LIB=${BFMDIR}/lib
 
-export BOPTIMOD_3STREAM_INC=$BOPTIMOD_3STREAM_DIR/include
-export BOPTIMOD_3STREAM_LIB=$BOPTIMOD_3STREAM_DIR/lib
+
+###### BIOPTIMOD SECTION ###############
+cd $BIOPTIMOD_3STREAM_DIR
+INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${OGSTM_COMPILER}${DEBUG}.inc
+cp $INC_FILE compiler.inc
+make
+export BIOPTIMOD_3STREAM_INCLUDE=$BOPTIMOD_3STREAM_DIR/include
+export BIOPTIMOD_3STREAM_LIBRARY=$BOPTIMOD_3STREAM_DIR/lib
+
+##########################################
+
+
+## OASIM SECTION #####
+cd $OASIM_DIR/dll
+if [ $OGSTM_COMPILER == intel ]]; then
+    ./setup-intel.sh
+    SUFFIX=i
+else
+    ./setup-gcc.sh
+    SUFFIX=g
+fi
+if [ $DEBUG == .dbg ] ; then
+    OASIM_BUILD=build_$SUFFIX
+else
+    OASIM_BUILD=release_$SUFFIX
+fi
+
+cd $OASIM_BUILD
+make
+export OASIM_ATM_INCLUDE=$OASIM_DIR/dll/$OASIM_BUILD/modules
+export OASIM_ATM_LIBRARY=$OASIM_DIR/dll/$OASIM_BUILD
+
+##########################
+
+
 
 
 CMAKE=1
@@ -143,8 +178,6 @@ if [ $CMAKE -eq 1 ] ; then
         fi
 	export BFM_INCLUDE=$BFM_INC
 	export BFM_LIBRARY=$BFM_LIB
-	export BIOPTIMOD_3STREAM_INCLUDE=$BOPTIMOD_3STREAM_INC
-	export BIOPTIMOD_3STREAM_LIBRARY=$BOPTIMOD_3STREAM_LIB
 
 	
 	mkdir -p $OGSTM_BLD_DIR

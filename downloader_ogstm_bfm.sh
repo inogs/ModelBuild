@@ -23,10 +23,9 @@ cd $OGSTM_HOME
 git clone git@github.com:BIOPTIMOD/Forward_Adjoint.git
 
 cd $OGSTM_HOME
-git clone git@github.com:pogmat/OASIM-experiments.git OASIM-ATM
-cd OASIM-ATM
+git clone git@github.com:pogmat/OASIM-experiments.git OASIM
+cd OASIM
 git checkout ogstm-integration
-
 
 exit 0
 
