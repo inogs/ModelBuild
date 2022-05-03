@@ -14,7 +14,7 @@
 
 OGSTM_ARCH=x86_64
 OGSTM_OS=LINUX
-OGSTM_COMPILER=gfortran
+OGSTM_COMPILER=intel
 DEBUG=       # this is the choice for production flags 
 #DEBUG=.dbg   # this is the one for debug flags
 
@@ -34,7 +34,7 @@ export OPENMP_FLAG=          # OpenMP deactivated
 # Warning : this choice must be consistent with Section 1. 
 
 # Just comment the two following lines you are not using modules. 
-export MODULEFILE=$PWD/ogstm/compilers/machine_modules/m100.gnu
+export MODULEFILE=$PWD/ogstm/compilers/machine_modules/g100.intel
 source $MODULEFILE
 
 
@@ -129,19 +129,21 @@ export BFM_LIB=${BFMDIR}/lib
 
 
 ###### BIOPTIMOD SECTION ###############
-cd $BIOPTIMOD_3STREAM_DIR
+cd $BIOPTIMOD_3STREAM_DIR/src
 INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${OGSTM_COMPILER}${DEBUG}.inc
 cp $INC_FILE compiler.inc
 make
-export BIOPTIMOD_3STREAM_INCLUDE=$BOPTIMOD_3STREAM_DIR/include
-export BIOPTIMOD_3STREAM_LIBRARY=$BOPTIMOD_3STREAM_DIR/lib
+if [ $? -ne 0 ] ; then  echo  ERROR in $PWD; exit 1 ; fi
+make libadj.a
+export BIOPTIMOD_3STREAM_INCLUDE=$BIOPTIMOD_3STREAM_DIR/include
+export BIOPTIMOD_3STREAM_LIBRARY=$BIOPTIMOD_3STREAM_DIR/lib
 
 ##########################################
 
 
 ## OASIM SECTION #####
 cd $OASIM_DIR/dll
-if [ $OGSTM_COMPILER == intel ]]; then
+if [ $OGSTM_COMPILER == intel ]; then
     ./setup-intel.sh
     SUFFIX=i
 else
@@ -156,6 +158,7 @@ fi
 
 cd $OASIM_BUILD
 make
+if [ $? -ne 0 ] ; then  echo  ERROR in $PWD; exit 1 ; fi
 export OASIM_ATM_INCLUDE=$OASIM_DIR/dll/$OASIM_BUILD/modules
 export OASIM_ATM_LIBRARY=$OASIM_DIR/dll/$OASIM_BUILD
 
