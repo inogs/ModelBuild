@@ -19,21 +19,20 @@ git checkout -b $BFM_RELEASE $BFM_RELEASE
 cd $OGSTM_HOME
 git clone git@github.com:inogs/ogstm.git
 cd ogstm
-git checkout $OGSTM_RELEASE $OGSTM_RELEASE
+git checkout bioptimod_merge #$OGSTM_RELEASE $OGSTM_RELEASE
 
 cd $OGSTM_HOME
 git clone git@github.com:BIOPTIMOD/Forward_Adjoint.git
 cd Forward_Adjoint
-git checkout $OASIM_RELEASE $OASIM_RELEASE
+git checkout -b $OASIM_RELEASE $OASIM_RELEASE
 
 cd $OGSTM_HOME
 git clone git@github.com:pogmat/OASIM-experiments.git OASIM
 cd OASIM
-git checkout $OASIM_RELEASE $OASIM_RELEASE
-
+git checkout -b $OASIM_RELEASE $OASIM_RELEASE
 
 cd $OGSTM_HOME
 git clone git@gitlab.hpc.cineca.it:OGS/3DVar.git
 cd 3DVar
-git checkout  $VAR3D_RELEASE $VAR3D_RELEASE
+git checkout -b $VAR3D_RELEASE $VAR3D_RELEASE
 
