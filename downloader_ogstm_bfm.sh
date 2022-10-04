@@ -16,12 +16,12 @@ BFMv2_RELEASE=branches/pl_mod
 
 # BFMv5 settings
 # Requirement: to have an account on git server
-BFMv5_REPO=git@github.com:CMCC-Foundation/BiogeochemicalFluxModel.git
-BFMv5_BRANCH=release_5.3
+BFMv5_REPO=git@github.com:BFM-Community/BiogeochemicalFluxModel.git
+BFMv5_BRANCH=esiwace_m100
 
 # OGSTM settings
-OGSTM_REPO=git@github.com:inogs/ogstm.git
-OGSTM_BRANCH=release_4.5
+OGSTM_REPO=git@github.com:stefanocampanella/ogstm.git
+OGSTM_BRANCH=esiwace_m100
 OGSTM_PATH=ogstm
 
 # VAR3D settings

@@ -11,8 +11,8 @@
 #    In the following example user will select the file x86_64.LINUX.intel.dbg.inc
 #    both in bfm/compilers/ and ogstm/compilers 
 
-OGSTM_ARCH=$(uname -m)
-OGSTM_OS=$(uname -s | tr [:lower:] [:upper:])
+ARCH=$(uname -m)
+OS=$(uname -s | tr [:lower:] [:upper:])
 CMAKE=1
 DEBUG=       # this is the choice for production flags 
 #DEBUG=.dbg   # this is the one for debug flags
@@ -20,7 +20,7 @@ DEBUG=       # this is the choice for production flags
 ################################################################### 
 # Section 2. Use of OpenMP threads, to improve the parallelization of ogstm.
 #    Just comment one of thes lines:
-export OPENMP_FLAG=-fopenmp  # OpenMP activated
+#export OPENMP_FLAG=-fopenmp  # OpenMP activated
 export OPENMP_FLAG=          # OpenMP deactivated
 
 ###################################################################
@@ -30,9 +30,9 @@ export OPENMP_FLAG=          # OpenMP deactivated
 # User can write his module file, in the directory below there are some examples.
 # Warning : this choice must be consistent with Section 1. 
 
-# Just comment the two following lines you are not using modules. 
+# Just comment the following line you are not using modules. 
 export MODULEFILE=$PWD/ogstm/compilers/machine_modules/m100.hpc-sdk
-source $MODULEFILE
+source ${MODULEFILE}
 
 ###################################################################
 # Section 4.  Oceanvar inclusion in model
@@ -68,7 +68,7 @@ fi
 if [[ $OCEANVAR == true ]]
 then
    cd 3DVar
-   INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${FC}${DEBUG_OCEANVAR}.inc
+   INC_FILE=${ARCH}.${OS}.${FC}${DEBUG_OCEANVAR}.inc
    cp $INC_FILE compiler.inc
    # make clean
    gmake
@@ -86,14 +86,14 @@ else
    BFMversion=bfmv5
 fi
 
-INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${FC}${DEBUG}.inc 
+INC_FILE=${ARCH}.${OS}.${FC}${DEBUG}.inc 
 if [[ $BFMversion == BFMv2 ]] 
 then 
     cd ${BFMDIR}/compilers cp $INC_FILE compiler.inc 
     # just because R1.3 does not have include/ 
     mkdir -p  ${BFMDIR}/include 
     cd ${BFMDIR}/build 
-    ./config_BFM.sh -a ${OGSTM_ARCH} -c ogstm
+    ./config_BFM.sh -a ${ARCH} -c ogstm
    cd BLD_OGSTMBFM
    # make clean
    gmake
@@ -150,11 +150,11 @@ else
 
     # ----------- standard OGSTM builder -----------------
 	cd ${OGSTMDIR}/compilers
-	INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${FC}${DEBUG}.inc
+	INC_FILE=${ARCH}.${OS}.${FC}${DEBUG}.inc
 	cp $INC_FILE compiler.inc
 	
 	cd ${OGSTMDIR}/build
-	./config_OGSTM.sh ${OGSTM_ARCH} 
+	./config_OGSTM.sh ${ARCH} 
 	cd BLD_OGSTM
 	make clean
 	make -f MakeLib
