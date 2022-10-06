@@ -29,7 +29,7 @@ VAR3D_REPO=git@gitlab.hpc.cineca.it:OGS/3DVar.git
 VAR3D_BRANCH=Multivariate
 VAR3D_PATH=3DVar
 
-cd -- "${ROOT}"
+cd -- "${ROOT}" || exit
 
 echo -e "\n==== Downloading BFM ===="
 if  [[ "${BFM_VERSION}" ==  v2 ]]; then
