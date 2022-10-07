@@ -13,7 +13,7 @@ DEBUG_OCEANVAR=
 
 ARCH=$(uname -m)
 OS=$(uname -s | tr '[:lower:]' '[:upper:]')
-ROOT=$(dirname -- "${BASH_SOURCE[0]}")
+ROOT=$(dirname -- "${BASH_SOURCE[0]}" | xargs -I {} realpath {})
 
 export MODULEFILE="$ROOT/ogstm/compilers/machine_modules/${MODULEFILE_}"
 source "${MODULEFILE}"
@@ -40,7 +40,7 @@ cd "${BFMDIR}" || exit
 export BFM_INC=${BFMDIR}/include
 export BFM_LIB=${BFMDIR}/lib
 # exit status 1 if bfmv5
-if svn info 2>&1; then
+if svn info; then
     BFMversion=BFMv2
     cd "${BFMDIR}/compilers" || exit
     cp "${ARCH}.${OS}.${FC}${DEBUG}.inc" compiler.inc
@@ -109,11 +109,11 @@ if [[ $BFMversion == bfmv5 ]]; then
     cd "${OGSTMDIR}/bfmv5/" || exit
     # generates namelist.passivetrc_new
     ./ogstm_namelist_gen.py
-    cp "${OGSTMDIR}/src/namelists/namelist*" "${OGSTMDIR}/ready_for_model_namelists/"
+    cp "${OGSTMDIR}/src/namelists/namelist"* "${OGSTMDIR}/ready_for_model_namelists/"
     # overwriting namelist
     cp namelist.passivetrc_new "${OGSTMDIR}/ready_for_model_namelists/namelist.passivetrc"
-    cp "${BFMDIR}/build/tmp/OGS_PELAGIC/*.nml" "${OGSTMDIR}/ready_for_model_namelists/"
+    cp "${BFMDIR}/build/tmp/OGS_PELAGIC/"*.nml "${OGSTMDIR}/ready_for_model_namelists/"
 else
-    cp "${OGSTMDIR}/src/namelists/namelist*" "${OGSTMDIR}/ready_for_model_namelists/"
-    cp "${BFMDIR}/src/namelist/*.nml" "${OGSTMDIR}/ready_for_model_namelists/"
+    cp "${OGSTMDIR}/src/namelists/namelist"* "${OGSTMDIR}/ready_for_model_namelists/"
+    cp "${BFMDIR}/src/namelist/"*.nml "${OGSTMDIR}/ready_for_model_namelists/"
 fi

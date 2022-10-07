@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # General settings
-ROOT="$(dirname -- "${BASH_SOURCE[0]}")"
+ROOT="$(dirname -- "${BASH_SOURCE[0]}") | xargs -I {} realpath {}"
 
 # BFM settings
 
