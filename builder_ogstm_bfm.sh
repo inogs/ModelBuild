@@ -1,4 +1,6 @@
 #! /usr/bin/env bash
+set -e
+set -o pipefail
 
 MODULEFILE_=m100.hpc-sdk
 CMAKE=true
@@ -87,6 +89,7 @@ if [[ $CMAKE == true ]]; then
         cmake ../ogstm/ "${CMAKE_COMMONS}" -DPETSC_LIBRARIES="${PETSC_LIB}" -DPNETCDF_LIBRARIES="${PNETCDF_LIB}/libpnetcdf.a"
     else
         cp ../ogstm/GeneralCmake.cmake ../ogstm/CMakeLists.txt
+        echo cmake ../ogstm/ "${CMAKE_COMMONS}"
         cmake ../ogstm/ "${CMAKE_COMMONS}"
     fi
     make
