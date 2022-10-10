@@ -10,13 +10,14 @@ DEBUG_OCEANVAR=
 # DEBUG=.dbg
 # DEBUG_OCEANVAR=.dbg
 
+set -e
 
 ARCH=$(uname -m)
 OS=$(uname -s | tr '[:lower:]' '[:upper:]')
 ROOT=$(dirname -- "${BASH_SOURCE[0]}" | xargs -I {} realpath {})
 
 export MODULEFILE="$ROOT/ogstm/compilers/machine_modules/${MODULEFILE_}"
-source "${MODULEFILE}"
+source "${MODULEFILE}" || :
 
 if [[ $# -eq 2 ]]; then
     BFMDIR=$1
@@ -41,7 +42,7 @@ export BFM_INC=${BFMDIR}/include
 export BFM_LIB=${BFMDIR}/lib
 # exit status 1 if bfmv5
 if svn info; then
-    BFMversion=BFMv2
+    export BFMversion=BFMv2
     cd "${BFMDIR}/compilers" || exit
     cp "${ARCH}.${OS}.${FC}${DEBUG}.inc" compiler.inc
     # just because R1.3 does not have include/
@@ -51,12 +52,11 @@ if svn info; then
     cd BLD_OGSTMBFM || exit
     gmake
 else
-   BFMversion=bfmv5
-   echo "Skipping BFM"
+   export BFMversion=bfmv5
    # in-place replace the entire ARCH line
-   sed -i "s/.*ARCH.*/        ARCH    = '${ARCH}.${OS}.${FC}${DEBUG}.inc'  /" build/configurations/OGS_PELAGIC/configuration
-   cd "${BFMDIR}/build" || exit
-   ./bfm_configure.sh -gcv -o ../lib/libbfm.a -p OGS_PELAGIC
+   #sed -i "s/.*ARCH.*/        ARCH    = '${ARCH}.${OS}.${FC}${DEBUG}.inc'  /" build/configurations/OGS_PELAGIC/configuration
+   #cd "${BFMDIR}/build" || exit
+   #./bfm_configure.sh -gcv -o ../lib/libbfm.a -p OGS_PELAGIC
 fi
 
 # CMake OGSTM builder
@@ -73,8 +73,14 @@ if [[ $CMAKE == true ]]; then
     fi
     mkdir -p "${OGSTM_BLD_DIR}"
     cd "${OGSTM_BLD_DIR}" || exit
-    CMAKE_COMMONS="-DMPIEXEC_EXECUTABLE=$(which mpiexec) -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} "
-    CMAKE_COMMONS+="-DNETCDF_INCLUDES_C=$NETCDF_INC -DNETCDF_LIBRARIES_C=$NETCDF_LIB/libnetcdf.so -DNETCDFF_INCLUDES_F90=$NETCDFF_INC -DNETCDFF_LIBRARIES_F90=$NETCDFF_LIB/libnetcdff.so -D${BFMversion}=ON"
+    CMAKE_COMMONS="-DCMAKE_VERBOSE_MAKEFILE=ON "
+    CMAKE_COMMONS+="-DMPIEXEC_EXECUTABLE=$(which mpiexec) "
+    CMAKE_COMMONS+="-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} "
+    CMAKE_COMMONS+="-DNETCDF_INCLUDES_C=${NETCDF_INC} "
+    CMAKE_COMMONS+="-DNETCDF_LIBRARIES_C=${NETCDF_LIB}/libnetcdf.so "
+    CMAKE_COMMONS+="-DNETCDFF_INCLUDES_F90=${NETCDFF_INC} "
+    CMAKE_COMMONS+="-DNETCDFF_LIBRARIES_F90=${NETCDFF_LIB}/libnetcdff.so "
+    CMAKE_COMMONS+="-D${BFMversion}=ON"
     if [[ $OCEANVAR == true ]]; then
         cd "${ROOT}/3DVar" || exit
         cp "${ARCH}.${OS}.${FC}${DEBUG_OCEANVAR}.inc" compiler.inc
@@ -83,12 +89,13 @@ if [[ $CMAKE == true ]]; then
         export DA_INCLUDE="${ROOT}/3DVar"
         export DA_LIBRARY="${ROOT}/3DVar"
         export PETSC_LIB=$PETSC_LIB/libpetsc.so
+        CMAKE_COMMONS+="-DPETSC_LIBRARIES=${PETSC_LIB} "
+        CMAKE_COMMONS+="-DPNETCDF_LIBRARIES=${PNETCDF_LIB}/libpnetcdf.a "
         cp ../ogstm/DataAssimilation.cmake ../ogstm/CMakeLists.txt
-        cmake ../ogstm/ "${CMAKE_COMMONS}" -DPETSC_LIBRARIES="${PETSC_LIB}" -DPNETCDF_LIBRARIES="${PNETCDF_LIB}/libpnetcdf.a"
     else
         cp ../ogstm/GeneralCmake.cmake ../ogstm/CMakeLists.txt
-        cmake ../ogstm/ "${CMAKE_COMMONS}"
     fi
+    cmake ../ogstm/ "${CMAKE_COMMONS}"
     make
 else
     # standard OGSTM builder
