@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # General settings
-ROOT="$(dirname -- "${BASH_SOURCE[0]}") | xargs -I {} realpath {}"
+ROOT="$(dirname -- "${BASH_SOURCE[0]}" | xargs -I {} realpath {})"
 
 # BFM settings
 
@@ -17,11 +17,11 @@ BFMv2_RELEASE=branches/pl_mod
 # BFMv5 settings
 # Requirement: to have an account on git server
 BFMv5_REPO=git@github.com:BFM-Community/BiogeochemicalFluxModel.git
-BFMv5_BRANCH=esiwace_m100
+BFMv5_BRANCH=m100
 
 # OGSTM settings
 OGSTM_REPO=git@github.com:stefanocampanella/ogstm.git
-OGSTM_BRANCH=esiwace_m100
+OGSTM_BRANCH=m100
 OGSTM_PATH=ogstm
 
 # VAR3D settings
