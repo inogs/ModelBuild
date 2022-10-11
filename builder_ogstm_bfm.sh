@@ -54,9 +54,9 @@ if svn info 2>/dev/null ; then
 else
    export BFMversion=bfmv5
    # in-place replace the entire ARCH line
-   #sed -i "s/.*ARCH.*/        ARCH    = '${ARCH}.${OS}.${FC}${DEBUG}.inc'  /" build/configurations/OGS_PELAGIC/configuration
-   #cd "${BFMDIR}/build" || exit
-   #./bfm_configure.sh -gcv -o ../lib/libbfm.a -p OGS_PELAGIC
+   sed -i "s/.*ARCH.*/        ARCH    = '${ARCH}.${OS}.${FC}${DEBUG}.inc'  /" build/configurations/OGS_PELAGIC/configuration
+   cd "${BFMDIR}/build" || exit
+   ./bfm_configure.sh -gcv -o ../lib/libbfm.a -p OGS_PELAGIC
 fi
 
 # CMake OGSTM builder
