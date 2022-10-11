@@ -14,7 +14,7 @@ set -e
 
 ARCH=$(uname -m)
 OS=$(uname -s | tr '[:lower:]' '[:upper:]')
-ROOT=$(dirname -- "${BASH_SOURCE[0]}" | xargs -I {} realpath {})
+ROOT=$(dirname -- "${BASH_SOURCE[0]}" | xargs realpath)
 
 export MODULEFILE="$ROOT/ogstm/compilers/machine_modules/${MODULEFILE_}"
 source "${MODULEFILE}" || :
@@ -41,7 +41,7 @@ cd "${BFMDIR}" || exit
 export BFM_INC=${BFMDIR}/include
 export BFM_LIB=${BFMDIR}/lib
 # exit status 1 if bfmv5
-if svn info; then
+if svn info 2>/dev/null ; then
     export BFMversion=BFMv2
     cd "${BFMDIR}/compilers" || exit
     cp "${ARCH}.${OS}.${FC}${DEBUG}.inc" compiler.inc
@@ -95,7 +95,7 @@ if [[ $CMAKE == true ]]; then
     else
         cp ../ogstm/GeneralCmake.cmake ../ogstm/CMakeLists.txt
     fi
-    cmake ../ogstm/ "${CMAKE_COMMONS}"
+    cmake ../ogstm/ ${CMAKE_COMMONS}
     make
 else
     # standard OGSTM builder
