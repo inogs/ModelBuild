@@ -6,10 +6,10 @@ MODULEFILE_=m100.hpc-sdk
 CMAKE=true
 OCEANVAR=false
 # Release
-DEBUG=
+#DEBUG=
 DEBUG_OCEANVAR=
 # Debug
-# DEBUG=.dbg
+DEBUG=.dbg
 # DEBUG_OCEANVAR=.dbg
 
 set -e
@@ -76,8 +76,12 @@ if [[ $CMAKE == true ]]; then
     mkdir -p "${OGSTM_BLD_DIR}"
     cd "${OGSTM_BLD_DIR}" || exit
     CMAKE_COMMONS="-DCMAKE_VERBOSE_MAKEFILE=ON "
-    CMAKE_COMMONS+="-DMPIEXEC_EXECUTABLE=$(which mpiexec) "
     CMAKE_COMMONS+="-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} "
+    CMAKE_COMMONS+="-DCMAKE_C_COMPILER_ID=PGI "
+    CMAKE_COMMONS+="-DCMAKE_Fortran_COMPILER_ID=PGI "
+    CMAKE_COMMONS+="-DMPIEXEC_EXECUTABLE=$(which mpiexec) "
+    CMAKE_COMMONS+="-DMPI_C_COMPILER=$(which mpipgicc) "
+    CMAKE_COMMONS+="-DMPI_Fortran_COMPILER=$(which mpipgifort) "
     CMAKE_COMMONS+="-DNETCDF_INCLUDES_C=${NETCDF_INC} "
     CMAKE_COMMONS+="-DNETCDF_LIBRARIES_C=${NETCDF_LIB}/libnetcdf.so "
     CMAKE_COMMONS+="-DNETCDFF_INCLUDES_F90=${NETCDFF_INC} "
@@ -97,7 +101,7 @@ if [[ $CMAKE == true ]]; then
     else
         cp ../ogstm/GeneralCmake.cmake ../ogstm/CMakeLists.txt
     fi
-    cmake ../ogstm/ ${CMAKE_COMMONS}
+    cmake -LAH ../ogstm/ ${CMAKE_COMMONS}
     make
 else
     # standard OGSTM builder
