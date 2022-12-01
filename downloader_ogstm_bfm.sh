@@ -27,7 +27,7 @@ git checkout -b $OASIM_RELEASE $OASIM_RELEASE
 cd $OGSTM_HOME
 git clone git@github.com:pogmat/OASIM-experiments.git OASIM
 cd OASIM
-git checkout $OASIM_RELEASE $OASIM_RELEASE
+git checkout -b $OASIM_RELEASE $OASIM_RELEASE
 
 cd $OGSTM_HOME
 git clone git@gitlab.hpc.cineca.it:OGS/3DVar.git

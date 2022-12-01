@@ -43,7 +43,7 @@ source $MODULEFILE
 # Set OCEANVAR=true         to include oceanvar.
 #     DEBUG_OCEANVAR=.dbg   to use debug flags
 
-OCEANVAR=false
+OCEANVAR=true
 DEBUG_OCEANVAR=
 ###################################################################
 
