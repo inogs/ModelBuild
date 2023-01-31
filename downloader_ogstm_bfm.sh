@@ -3,7 +3,7 @@
 
   BFM_BRANCH=dev_ogs_Hg
 
- OGSTM_BRANCH=bioptimod_Hg
+ OGSTM_BRANCH=monospectral_Hg
 
 # ----------- BFM library ---------------------
 
