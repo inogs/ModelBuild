@@ -5,10 +5,10 @@ set -o pipefail
 MODULEFILE_=m100.hpc-sdk
 OCEANVAR=false
 # Release
-DEBUG=
+#DEBUG=
 DEBUG_OCEANVAR=
 # Debug
-#DEBUG=.dbg
+DEBUG=.dbg
 #DEBUG_OCEANVAR=.dbg
 
 set -e
@@ -42,10 +42,8 @@ cd "${BFMDIR}" || exit
 export BFM_INC=${BFMDIR}/include
 export BFM_LIB=${BFMDIR}/lib
 export BFMversion=bfmv5
-# in-place replace the entire ARCH line
-sed -i "s/.*ARCH.*/        ARCH    = '${ARCH}.${OS}.${FC}${DEBUG}.inc'  /" build/configurations/OGS_PELAGIC/configuration
 cd "${BFMDIR}/build" || exit
-#./bfm_configure.sh -gcv -o ../lib/libbfm.a -p OGS_PELAGIC
+./bfm_configure.sh -gcfv -o ../lib/libbfm.a -p OGS_PELAGIC -a ${ARCH}.${OS}.${FC}${DEBUG}.inc
 
 # CMake OGSTM builder
 cd "${OGSTMDIR}/.." || exit
