@@ -4,7 +4,7 @@
   BFM_version=bfmv5   #  BFMv2 or bfmv5
   BFM_RELEASE=branches/pl_mod 
 
- OGSTM_BRANCH=master
+ OGSTM_BRANCH=integrate_ens
  VAR3D_BRANCH=Multivariate
 
 SVN_USER=svnogs01  # user on https://hpc-forge.cineca.it/
@@ -23,8 +23,11 @@ else
     git checkout -b dev_ogs origin/dev_ogs
 fi
 
+
 cd $OGSTM_HOME
 git clone git@github.com:inogs/ogstm.git
+cd ogstm
+git checkout -b $OGSTM_BRANCH origin/$OGSTM_BRANCH
 
 
 cd $OGSTM_HOME
