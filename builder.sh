@@ -1,43 +1,66 @@
 #! /usr/bin/env bash
+
+OS=$(uname -s | tr '[:lower:]' '[:upper:]')
+ROOT=$(dirname -- "${BASH_SOURCE[0]}" | xargs realpath)
+ARGS=$(getopt --options 'dvb:o:' --longoptions 'debug,oceanvar,bfmdir:,ogstmdir:' -- "${@}")
+
+if [[ $? -ne 0 ]]; then
+        echo 'Usage: ./builder_ogstm_bfm.sh [-d|--debug] [-v|--oceanvar] [-b|--bfmdir] [-o|--ogstmdir] modulefile'
+        exit 1
+fi
+
+DEBUG=
+DEBUG_OCEANVAR=
+OCEANVAR=false
+MODULEBASENAME=m100.hpc-sdk
+BFMDIR="${ROOT}/bfm"
+OGSTMDIR="${ROOT}/ogstm"
+ARCH=$(uname -m)
+
+eval "set -- ${ARGS}"
+while true; do
+    case "${1}" in
+        (-d | --debug)
+            DEBUG=.dbg
+            DEBUG_OCEANVAR=.dbg
+            shift
+        ;;
+        (-v | --oceanvar)
+	        OCEANVAR=true
+            shift
+        ;;
+        (-b | --bfmdir)
+	        BFMDIR=${2}
+            shift 2
+        ;;
+        (-o | --ogstmdir)
+	        OGSTMDIR=${2}
+            shift 2
+        ;;
+        (--)
+            shift
+            break
+        ;;
+        (*)
+            exit 1    # error
+        ;;
+    esac
+done
+
+if [[ ! -z "${@}" ]]; then
+    MODULEBASENAME="${@}"
+fi
+
 set -e
 set -o pipefail
 
-MODULEFILE_=m100.hpc-sdk
-OCEANVAR=false
-# Release
-#DEBUG=
-DEBUG_OCEANVAR=
-# Debug
-DEBUG=.dbg
-#DEBUG_OCEANVAR=.dbg
-
-set -e
-
-ARCH=$(uname -m)
-OS=$(uname -s | tr '[:lower:]' '[:upper:]')
-ROOT=$(dirname -- "${BASH_SOURCE[0]}" | xargs realpath)
-
-export MODULEFILE="$ROOT/ogstm/compilers/machine_modules/${MODULEFILE_}"
+export MODULEFILE="$ROOT/ogstm/compilers/machine_modules/${MODULEBASENAME}"
+echo "Sourcing module file located at ${MODULEFILE}"
 source "${MODULEFILE}" || :
 
-if [[ $# -eq 2 ]]; then
-    BFMDIR=$1
-    OGSTMDIR=$2
-elif [[ $# -eq 0 ]]; then
-    BFMDIR="${ROOT}/bfm"
-    OGSTMDIR="${ROOT}/ogstm"
-else
-    echo "SYNOPSYS"
-    echo "Build BFM and ogstm model"
-    echo "builder_ogstm_bfm.sh [ BFMDIR ] [ OGSTMDIR ]"
-    echo ""
-    echo " Dirs have to be expressed as full paths "
-    echo "EXAMPLE"
-    echo " ./builder_ogstm_bfm.sh $PWD/bfm $PWD/ogstm "
-    exit 1
-fi
-
 # BFM library
+echo '==== BUILDING BFM ===='
+mkdir -p "${BFMDIR}"
 cd "${BFMDIR}" || exit
 export BFM_INC=${BFMDIR}/include
 export BFM_LIB=${BFMDIR}/lib
@@ -46,6 +69,8 @@ cd "${BFMDIR}/build" || exit
 ./bfm_configure.sh -gcfv -o ../lib/libbfm.a -p OGS_PELAGIC -a ${ARCH}.${OS}.${FC}${DEBUG}.inc
 
 # CMake OGSTM builder
+echo '==== BUILDING OGSTM ===='
+mkdir -p "${OGSTMDIR}"
 cd "${OGSTMDIR}/.." || exit
 export BFM_INCLUDE=$BFM_INC
 export BFM_LIBRARY=$BFM_LIB
@@ -60,12 +85,12 @@ mkdir -p "${OGSTM_BLD_DIR}"
 cd "${OGSTM_BLD_DIR}" || exit
 CMAKE_COMMONS="-DCMAKE_VERBOSE_MAKEFILE=ON "
 CMAKE_COMMONS+="-DMPIEXEC_EXECUTABLE=$(which mpiexec) "
-if [[ $MODULEFILE_ == m100.hpc-sdk ]]; then
+if [[ $MODULEBASENAME == m100.hpc-sdk ]]; then
     CMAKE_COMMONS+="-DCMAKE_C_COMPILER_ID=PGI "
     CMAKE_COMMONS+="-DCMAKE_Fortran_COMPILER_ID=PGI "
     CMAKE_COMMONS+="-DMPI_C_COMPILER=$(which mpipgicc) "
     CMAKE_COMMONS+="-DMPI_Fortran_COMPILER=$(which mpipgifort) "
-elif [[ $MODULEFILE_ == m100.gnu ]]; then
+elif [[ $MODULEBASENAME == m100.gnu ]]; then
     CMAKE_COMMONS+="-DCMAKE_C_COMPILER_ID=GNU "
     CMAKE_COMMONS+="-DCMAKE_Fortran_COMPILER_ID=GNU "
     CMAKE_COMMONS+="-DMPI_C_COMPILER=$(which mpicc) "
@@ -95,6 +120,7 @@ cmake -LAH ../ogstm/ ${CMAKE_COMMONS}
 make
 
 # Namelist generation (also by Frequency Control)
+echo '==== GENERATING NAMELIST ===='
 mkdir -p "${OGSTMDIR}/ready_for_model_namelists/"
 if [[ $BFMversion == bfmv5 ]]; then
     cp "${BFMDIR}/build/tmp/OGS_PELAGIC/namelist.passivetrc" "${OGSTMDIR}/bfmv5/"
