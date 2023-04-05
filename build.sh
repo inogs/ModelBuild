@@ -3,23 +3,23 @@
 ARCH=$(uname -m)
 OS=$(uname -s | tr '[:lower:]' '[:upper:]')
 ROOT=$(dirname -- "${BASH_SOURCE[0]}" | xargs realpath)
-ARGS=$(getopt --options '' --longoptions 'download,debug,var3d,var3dpath:,var3drepo:,var3dbranch:,bfmpath:,bfmrepo:,bfmbranch:,ogstmpath:,ogstmrepo:,ogstmbranch:,modulename:' -- "${@}")
+ARGS=$(getopt --options '' --longoptions 'download,debug,var3d,clone_options:,var3dpath:,var3drepo:,var3dbranch:,bfmpath:,bfmrepo:,bfmbranch:,ogstmpath:,ogstmrepo:,ogstmbranch:,modulename:,buildpath:' -- "${@}")
 
 if [[ $? -ne 0 ]]; then
-        echo 'Usage: ./builder_ogstm_bfm.sh [-d|--debug] [--var3d] [--var3dpath=] [--var3drepo=] [--var3dbranch=] [--bfmpath=] [--bfmrepo=] [--bfmbranch=] [--ogstmpath=] [--ogstmrepo=] [--ogstmbranch=] [--modulename=]'
+        echo 'Usage: ./build.sh [-d|--debug] [--download] [--var3d] [--clone_options=] [--var3dpath=] [--var3drepo=] [--var3dbranch=] [--bfmpath=] [--bfmrepo=] [--bfmbranch=] [--ogstmpath=] [--ogstmrepo=] [--ogstmbranch=] [--modulename=] [--buildpath=]'
         exit 1
 fi
 
 # General settings
 
 DOWNLOAD=false
-DEBUG=
+DEBUG=false
 OCEANVAR=false
 MODULEBASENAME=m100.hpc-sdk
+BUILD_PATH="${ROOT}/OGSTM_BUILD"
 
 # BFM settings
 BFM_PATH="${ROOT}/bfm"
-BFM_VERSION=v5
 BFMv5_REPO=git@github.com:BFM-Community/BiogeochemicalFluxModel.git
 BFMv5_BRANCH=dev_gpu
 
@@ -38,6 +38,7 @@ while true; do
     case "${1}" in
         (-d | --debug)
             DEBUG=.dbg
+            DEBUG_SUFFIX=.dbg
             shift
         ;;
         (--download)
@@ -48,8 +49,12 @@ while true; do
 	        OCEANVAR=true
             shift
         ;;
+        (--clone_options)
+	        GIT_CLONE_OPTIONS=${2}
+            shift 2
+        ;;
         (--var3dpath)
-	        VAR3D_PATH=${2}
+	        VAR3D_PATH="${ROOT}/${2}"
             shift 2
         ;;
         (--var3drepo)
@@ -61,7 +66,7 @@ while true; do
             shift 2
         ;;
         (--bfmpath)
-	        BFM_PATH=${2}
+	        BFM_PATH="${ROOT}/${2}"
             shift 2
         ;;
         (--bfmrepo)
@@ -73,7 +78,7 @@ while true; do
             shift 2
         ;;
         (--ogstmpath)
-	        OGSTM_PATH=${2}
+	        OGSTM_PATH="${ROOT}/${2}"
             shift 2
         ;;
         (--ogstmrepo)
@@ -86,6 +91,10 @@ while true; do
         ;;
         (--modulename)
 	        MODULEBASENAME=${2}
+            shift 2
+        ;;
+        (--buildpath)
+	        BUILD_PATH="${ROOT}/${2}"
             shift 2
         ;;
         (--)
@@ -110,33 +119,26 @@ if [[ $DOWNLOAD == true ]]; then
     git clone ${GIT_CLONE_OPTIONS} --branch ${OGSTM_BRANCH} -- ${OGSTM_REPO} "${OGSTM_PATH}" || echo "An error occurred while cloning OGSTM. Skipping"
 fi 
 
+echo -e "\n==== Sourcing ${MODULEBASENAME} ===="
 export MODULEFILE="$ROOT/ogstm/compilers/machine_modules/${MODULEBASENAME}"
-echo "Sourcing module file located at ${MODULEFILE}"
 source "${MODULEFILE}" || :
 
-echo '==== Building BFM ===='
-mkdir -p "${BFM_PATH}"
-cd "${BFM_PATH}" || exit
+echo -e "\n==== Building BFM ===="
 export BFM_INC=${BFM_PATH}/include
 export BFM_LIB=${BFM_PATH}/lib
-export BFMversion=bfmv5
 cd "${BFM_PATH}/build" || exit
-./bfm_configure.sh -gcfv -o ../lib/libbfm.a -p OGS_PELAGIC -a ${ARCH}.${OS}.${FC}${DEBUG}.inc
+./bfm_configure.sh -gcfv -o ../lib/libbfm.a -p OGS_PELAGIC -a ${ARCH}.${OS}.${FC}${DEBUG_SUFFIX}.inc
 
-echo '==== Building OGSTM ===='
-mkdir -p "${OGSTM_PATH}"
-cd "${OGSTM_PATH}/.." || exit
+echo -e "\n==== Building OGSTM ===="
 export BFM_INCLUDE=$BFM_INC
 export BFM_LIBRARY=$BFM_LIB
-if [[ $DEBUG == .dbg ]]; then
+mkdir -p "${BUILD_PATH}"
+cd "${BUILD_PATH}" || exit
+if [[ $DEBUG == true ]]; then
     CMAKE_BUILD_TYPE=Debug
-    OGSTM_BLD_DIR=OGSTM_BUILD_DBG
 else
     CMAKE_BUILD_TYPE=Release
-    OGSTM_BLD_DIR=OGSTM_BUILD
 fi
-mkdir -p "${OGSTM_BLD_DIR}"
-cd "${OGSTM_BLD_DIR}" || exit
 CMAKE_COMMONS="-DCMAKE_VERBOSE_MAKEFILE=ON "
 CMAKE_COMMONS+="-DMPIEXEC_EXECUTABLE=$(which mpiexec) "
 if [[ $MODULEBASENAME == m100.hpc-sdk ]]; then
@@ -155,7 +157,7 @@ CMAKE_COMMONS+="-DNETCDF_INCLUDES_C=${NETCDF_INC} "
 CMAKE_COMMONS+="-DNETCDF_LIBRARIES_C=${NETCDF_LIB}/libnetcdf.so "
 CMAKE_COMMONS+="-DNETCDFF_INCLUDES_F90=${NETCDFF_INC} "
 CMAKE_COMMONS+="-DNETCDFF_LIBRARIES_F90=${NETCDFF_LIB}/libnetcdff.so "
-CMAKE_COMMONS+="-D${BFMversion}=ON"
+CMAKE_COMMONS+="-Dbfmv5=ON"
 if [[ $OCEANVAR == true ]]; then
 
     if [[ $DOWNLOAD == true ]]; then
@@ -163,35 +165,30 @@ if [[ $OCEANVAR == true ]]; then
         git clone ${GIT_CLONE_OPTIONS} --branch ${VAR3D_BRANCH} -- ${VAR3D_REPO} "${VAR3D_PATH}" || echo "An error occurred while cloning 3DVar. Skipping"
     fi
     
-    cd "${ROOT}/3DVar" || exit
-    cp "${ARCH}.${OS}.${FC}${DEBUG}.inc" compiler.inc
-    gmake
+    cd "${VAR3D_PATH}" || exit
+    cp "${ARCH}.${OS}.${FC}${DEBUG_SUFFIX}.inc" compiler.inc
+
+    echo -e "\n==== Building 3DVar ===="
+    make
     
-    export DA_INCLUDE="${ROOT}/3DVar"
-    export DA_LIBRARY="${ROOT}/3DVar"
-    export PETSC_LIB=$PETSC_LIB/libpetsc.so
+    export DA_INCLUDE="${VAR3D_PATH}"
+    export DA_LIBRARY="${VAR3D_PATH}"
+    export PETSC_LIB="${PETSC_LIB}/libpetsc.so"
     CMAKE_COMMONS+="-DPETSC_LIBRARIES=${PETSC_LIB} "
     CMAKE_COMMONS+="-DPNETCDF_LIBRARIES=${PNETCDF_LIB}/libpnetcdf.a "
-    cp ../ogstm/DataAssimilation.cmake ../ogstm/CMakeLists.txt
+    cp "${OGSTM_PATH}/DataAssimilation.cmake" "${OGSTM_PATH}/CMakeLists.txt"
 else
-    cp ../ogstm/GeneralCmake.cmake ../ogstm/CMakeLists.txt
+    cp "${OGSTM_PATH}/GeneralCmake.cmake" "${OGSTM_PATH}/CMakeLists.txt"
 fi
-cmake -LAH ../ogstm/ ${CMAKE_COMMONS}
-make
+cmake -LAH ${OGSTM_PATH} ${CMAKE_COMMONS}
+#make
 
-# Namelist generation (also by Frequency Control)
-echo '==== Generating namelists ===='
+echo -e "\n==== Generating namelists ===="
+cp "${BFM_PATH}/build/tmp/OGS_PELAGIC/namelist.passivetrc" "${OGSTM_PATH}/bfmv5/"
+cd "${OGSTM_PATH}/bfmv5/" || exit
+./ogstm_namelist_gen.py
+
 mkdir -p "${OGSTM_PATH}/ready_for_model_namelists/"
-if [[ $BFMversion == bfmv5 ]]; then
-    cp "${BFM_PATH}/build/tmp/OGS_PELAGIC/namelist.passivetrc" "${OGSTM_PATH}/bfmv5/"
-    cd "${OGSTM_PATH}/bfmv5/" || exit
-    # generates namelist.passivetrc_new
-    ./ogstm_namelist_gen.py
-    cp "${OGSTM_PATH}/src/namelists/namelist"* "${OGSTM_PATH}/ready_for_model_namelists/"
-    # overwriting namelist
-    cp namelist.passivetrc_new "${OGSTM_PATH}/ready_for_model_namelists/namelist.passivetrc"
-    cp "${BFM_PATH}/build/tmp/OGS_PELAGIC/"*.nml "${OGSTM_PATH}/ready_for_model_namelists/"
-else
-    cp "${OGSTM_PATH}/src/namelists/namelist"* "${OGSTM_PATH}/ready_for_model_namelists/"
-    cp "${BFM_PATH}/src/namelist/"*.nml "${OGSTM_PATH}/ready_for_model_namelists/"
-fi
+cp "${OGSTM_PATH}/src/namelists/namelist"* "${OGSTM_PATH}/ready_for_model_namelists/"
+cp namelist.passivetrc_new "${OGSTM_PATH}/ready_for_model_namelists/namelist.passivetrc"
+cp "${BFM_PATH}/build/tmp/OGS_PELAGIC/"*.nml "${OGSTM_PATH}/ready_for_model_namelists/"
