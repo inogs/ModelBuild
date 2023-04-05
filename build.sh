@@ -3,25 +3,53 @@
 ARCH=$(uname -m)
 OS=$(uname -s | tr '[:lower:]' '[:upper:]')
 ROOT=$(dirname -- "${BASH_SOURCE[0]}" | xargs realpath)
-ARGS=$(getopt --options '' --longoptions 'download,debug,var3d,clone_options:,var3dpath:,var3drepo:,var3dbranch:,bfmpath:,bfmrepo:,bfmbranch:,ogstmpath:,ogstmrepo:,ogstmbranch:,modulename:,buildpath:' -- "${@}")
 
+usage() {
+    more << EOF
+NAME
+    This script download and compile the coupled OGSTM-BFM model (by default, for Marconi 100 with GPU support enabled).
+
+SYNOPSIS
+    usage: $0 --help
+    usage: $0 [options]
+
+DESCRIPTION
+    Download options
+        --no-download                           Do not download the source code from GitHub
+        --clone-options     GIT_CLONE_OPTIONS   git-clone options (such as --single-branch)
+        --ogstm-branch      OGSTM_BRANCH        Which branch of OGSTM tree to use (relative to the location of $0, default dev_gpu)
+        --bfm-branch        BFM_BRANCH          Which branch of BFM tree to use(relative to the location of $0, default dev_gpu)
+        --var3d-branch      VAR3D_BRANCH        Which branch of 3DVar tree to use ( source (relative to the location of $0, default dev_gpu)
+    Compilation options
+        --debug                                 Compiles debug version
+        --var3d                                 Enables data assimilation component
+        --machine-modules   MOD_NAME            Specifies which file (among the available ones in OGSTM) to source, to load modules
+        --build-path        BUILD_PATH          Where to build OGSTM-BFM (relative to the location of $0, default OGSTM_BUILD)
+        --ogstm-path        OGSTM_PATH          Where to look for the OGSTM source (relative to the location of $0, default ogstm)
+        --bfm-path          BFM_PATH            Where to look for the BFM source (relative to the location of $0, default bfm)
+    Other options
+        --help                                  Shows this help
+EOF
+}
+
+LONGOPTS='help,no-download,debug,var3d,clone-options:,var3d-path:,var3d-branch:,bfm-path:,bfm-branch:,ogstm-path:,ogstm-branch:,module-file:,build-path:'
+ARGS=$(getopt --options '' --longoptions ${LONGOPTS} -- "${@}")
 if [[ $? -ne 0 ]]; then
-        echo 'Usage: ./build.sh [-d|--debug] [--download] [--var3d] [--clone_options=] [--var3dpath=] [--var3drepo=] [--var3dbranch=] [--bfmpath=] [--bfmrepo=] [--bfmbranch=] [--ogstmpath=] [--ogstmrepo=] [--ogstmbranch=] [--modulename=] [--buildpath=]'
+        usage
         exit 1
 fi
 
 # General settings
-
-DOWNLOAD=false
+DOWNLOAD=true
 DEBUG=false
-OCEANVAR=false
-MODULEBASENAME=m100.hpc-sdk
+VAR3D=false
+MOD_NAME=m100.hpc-sdk
 BUILD_PATH="${ROOT}/OGSTM_BUILD"
 
 # BFM settings
 BFM_PATH="${ROOT}/bfm"
-BFMv5_REPO=git@github.com:BFM-Community/BiogeochemicalFluxModel.git
-BFMv5_BRANCH=dev_gpu
+BFM_REPO=git@github.com:BFM-Community/BiogeochemicalFluxModel.git
+BFM_BRANCH=dev_gpu
 
 # OGSTM settings
 OGSTM_REPO=git@github.com:inogs/ogstm.git
@@ -36,73 +64,65 @@ VAR3D_PATH=3DVar
 eval "set -- ${ARGS}"
 while true; do
     case "${1}" in
-        (-d | --debug)
-            DEBUG=.dbg
+        (--debug)
+            DEBUG=true
             DEBUG_SUFFIX=.dbg
             shift
         ;;
-        (--download)
-	        DOWNLOAD=true
+        (--no-download)
+	        DOWNLOAD=false
             shift
         ;;
         (--var3d)
-	        OCEANVAR=true
+	        VAR3D=true
             shift
         ;;
-        (--clone_options)
+        (--clone-options)
 	        GIT_CLONE_OPTIONS=${2}
             shift 2
         ;;
-        (--var3dpath)
+        (--var3d-path)
 	        VAR3D_PATH="${ROOT}/${2}"
             shift 2
         ;;
-        (--var3drepo)
-	        VAR3D_REPO=${2}
-            shift 2
-        ;;
-        (--var3dbranch)
+        (--var3d-branch)
 	        VAR3D_BRANCH=${2}
             shift 2
         ;;
-        (--bfmpath)
+        (--bfm-path)
 	        BFM_PATH="${ROOT}/${2}"
             shift 2
         ;;
-        (--bfmrepo)
-	        BFMv5_REPO=${2}
+        (--bfm-branch)
+	        BFM_BRANCH=${2}
             shift 2
         ;;
-        (--bfmbranch)
-	        BFMv5_BRANCH=${2}
-            shift 2
-        ;;
-        (--ogstmpath)
+        (--ogstm-path)
 	        OGSTM_PATH="${ROOT}/${2}"
             shift 2
         ;;
-        (--ogstmrepo)
-	        OGSTM_REPO=${2}
-            shift 2
-        ;;
-        (--ogstmbranch)
+        (--ogstm-branch)
 	        OGSTM_BRANCH=${2}
             shift 2
         ;;
-        (--modulename)
-	        MODULEBASENAME=${2}
+        (--machine-modules)
+	        MOD_NAME=${2}
             shift 2
         ;;
-        (--buildpath)
+        (--build-path)
 	        BUILD_PATH="${ROOT}/${2}"
             shift 2
+        ;;
+        (--help)
+	        usage 
+            exit 0
         ;;
         (--)
             shift
             break
         ;;
         (*)
-            exit 1    # error
+            exit 1
         ;;
     esac
 done
@@ -114,14 +134,13 @@ cd -- "${ROOT}" || exit
 
 if [[ $DOWNLOAD == true ]]; then
     echo -e "\n==== Downloading BFM ===="
-    git clone ${GIT_CLONE_OPTIONS} --branch ${BFMv5_BRANCH} -- ${BFMv5_REPO} "${BFM_PATH}" || echo "An error occurred while cloning BFM. Skipping."
+    git clone ${GIT_CLONE_OPTIONS} --branch ${BFM_BRANCH} -- ${BFM_REPO} "${BFM_PATH}" || echo "An error occurred while cloning BFM. Skipping."
     echo -e "\n==== Downloading OGSTM ===="
     git clone ${GIT_CLONE_OPTIONS} --branch ${OGSTM_BRANCH} -- ${OGSTM_REPO} "${OGSTM_PATH}" || echo "An error occurred while cloning OGSTM. Skipping"
 fi 
 
-echo -e "\n==== Sourcing ${MODULEBASENAME} ===="
-export MODULEFILE="$ROOT/ogstm/compilers/machine_modules/${MODULEBASENAME}"
-source "${MODULEFILE}" || :
+echo -e "\n==== Sourcing ${MOD_NAME} ===="
+source "$ROOT/ogstm/compilers/machine_modules/${MOD_NAME}" || :
 
 echo -e "\n==== Building BFM ===="
 export BFM_INC=${BFM_PATH}/include
@@ -134,6 +153,7 @@ export BFM_INCLUDE=$BFM_INC
 export BFM_LIBRARY=$BFM_LIB
 mkdir -p "${BUILD_PATH}"
 cd "${BUILD_PATH}" || exit
+
 if [[ $DEBUG == true ]]; then
     CMAKE_BUILD_TYPE=Debug
 else
@@ -141,12 +161,12 @@ else
 fi
 CMAKE_COMMONS="-DCMAKE_VERBOSE_MAKEFILE=ON "
 CMAKE_COMMONS+="-DMPIEXEC_EXECUTABLE=$(which mpiexec) "
-if [[ $MODULEBASENAME == m100.hpc-sdk ]]; then
+if [[ $MOD_NAME == m100.hpc-sdk ]]; then
     CMAKE_COMMONS+="-DCMAKE_C_COMPILER_ID=PGI "
     CMAKE_COMMONS+="-DCMAKE_Fortran_COMPILER_ID=PGI "
     CMAKE_COMMONS+="-DMPI_C_COMPILER=$(which mpipgicc) "
     CMAKE_COMMONS+="-DMPI_Fortran_COMPILER=$(which mpipgifort) "
-elif [[ $MODULEBASENAME == m100.gnu ]]; then
+elif [[ $MOD_NAME == m100.gnu ]]; then
     CMAKE_COMMONS+="-DCMAKE_C_COMPILER_ID=GNU "
     CMAKE_COMMONS+="-DCMAKE_Fortran_COMPILER_ID=GNU "
     CMAKE_COMMONS+="-DMPI_C_COMPILER=$(which mpicc) "
@@ -158,7 +178,7 @@ CMAKE_COMMONS+="-DNETCDF_LIBRARIES_C=${NETCDF_LIB}/libnetcdf.so "
 CMAKE_COMMONS+="-DNETCDFF_INCLUDES_F90=${NETCDFF_INC} "
 CMAKE_COMMONS+="-DNETCDFF_LIBRARIES_F90=${NETCDFF_LIB}/libnetcdff.so "
 CMAKE_COMMONS+="-Dbfmv5=ON"
-if [[ $OCEANVAR == true ]]; then
+if [[ $VAR3D == true ]]; then
 
     if [[ $DOWNLOAD == true ]]; then
         echo -e "\n==== Downloading 3DVar ===="
@@ -181,7 +201,7 @@ else
     cp "${OGSTM_PATH}/GeneralCmake.cmake" "${OGSTM_PATH}/CMakeLists.txt"
 fi
 cmake -LAH ${OGSTM_PATH} ${CMAKE_COMMONS}
-#make
+make
 
 echo -e "\n==== Generating namelists ===="
 cp "${BFM_PATH}/build/tmp/OGS_PELAGIC/namelist.passivetrc" "${OGSTM_PATH}/bfmv5/"
