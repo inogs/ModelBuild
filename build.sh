@@ -17,8 +17,8 @@ DESCRIPTION
     Download options
         --no-download                           Do not download the source code from GitHub
         --clone-options     GIT_CLONE_OPTIONS   git-clone options (such as --single-branch)
-        --ogstm-branch      OGSTM_BRANCH        Which branch of OGSTM tree to use (default dev_gpu)
-        --bfm-branch        BFM_BRANCH          Which branch of BFM tree to use (default dev_gpu)
+        --ogstm-branch      OGSTM_BRANCH        Which branch of OGSTM tree to use (default dev_gpu/trcadv)
+        --bfm-branch        BFM_BRANCH          Which branch of BFM tree to use (default dev_gpu/mesozoo)
         --var3d-branch      VAR3D_BRANCH        Which branch of 3DVar tree to use (default dev_gpu)
     Compilation options
         --verbose                               Increases verbosity
@@ -51,17 +51,17 @@ MOD_NAME=m100.hpc-sdk
 BUILD_PATH="${ROOT}/OGSTM_BUILD"
 VERBOSE=false
 BUILD_BFM=true
-BUILD_OGSTM=false
+BUILD_OGSTM=true
 CLEAR_CACHE=true
 
 # BFM settings
 BFM_PATH="${ROOT}/bfm"
 BFM_REPO=git@github.com:BFM-Community/BiogeochemicalFluxModel.git
-BFM_BRANCH=dev_gpu
+BFM_BRANCH=dev_gpu/mesozoo
 
 # OGSTM settings
 OGSTM_REPO=git@github.com:inogs/ogstm.git
-OGSTM_BRANCH=dev_gpu
+OGSTM_BRANCH=dev_gpu/trcadv
 OGSTM_PATH="${ROOT}/ogstm"
 
 # VAR3D settings
