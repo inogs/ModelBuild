@@ -247,12 +247,14 @@ if [[ $BUILD_OGSTM == true ]]; then
     make
 fi
 
-echo -e "\n==== Generating namelists ===="
-cp "${BFM_PATH}/build/tmp/OGS_PELAGIC/namelist.passivetrc" "${OGSTM_PATH}/bfmv5/"
-cd "${OGSTM_PATH}/bfmv5/" || exit
-./ogstm_namelist_gen.py
-
-mkdir -p "${OGSTM_PATH}/ready_for_model_namelists/"
-cp "${OGSTM_PATH}/src/namelists/namelist"* "${OGSTM_PATH}/ready_for_model_namelists/"
-cp namelist.passivetrc_new "${OGSTM_PATH}/ready_for_model_namelists/namelist.passivetrc"
-cp "${BFM_PATH}/build/tmp/OGS_PELAGIC/"*.nml "${OGSTM_PATH}/ready_for_model_namelists/"
+if [[ $CLEAR_CACHE == true ]]; then
+   echo -e "\n==== Generating namelists ===="
+   cp "${BFM_PATH}/build/tmp/OGS_PELAGIC/namelist.passivetrc" "${OGSTM_PATH}/bfmv5/"
+   cd "${OGSTM_PATH}/bfmv5/" || exit
+   ./ogstm_namelist_gen.py
+   
+   mkdir -p "${OGSTM_PATH}/ready_for_model_namelists/"
+   cp "${OGSTM_PATH}/src/namelists/namelist"* "${OGSTM_PATH}/ready_for_model_namelists/"
+   cp namelist.passivetrc_new "${OGSTM_PATH}/ready_for_model_namelists/namelist.passivetrc"
+   cp "${BFM_PATH}/build/tmp/OGS_PELAGIC/"*.nml "${OGSTM_PATH}/ready_for_model_namelists/"
+fi
