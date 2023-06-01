@@ -15,7 +15,7 @@ SYNOPSIS
 
 DESCRIPTION
     Download options
-        --no-download                           Do not download the source code from GitHub
+        --download                              Download the source code from GitHub
         --clone-options     GIT_CLONE_OPTIONS   git-clone options (such as --single-branch)
         --ogstm-branch      OGSTM_BRANCH        Which branch of OGSTM tree to use (default dev_gpu/trcadv)
         --bfm-branch        BFM_BRANCH          Which branch of BFM tree to use (default dev_gpu/mesozoo)
@@ -36,7 +36,7 @@ DESCRIPTION
 EOF
 }
 
-LONGOPTS='help,no-download,debug,verbose,fast,skip-bfm,skip-ogstm,var3d,clone-options:,var3d-path:,var3d-branch:,bfm-path:,bfm-branch:,ogstm-path:,ogstm-branch:,module-file:,build-path:'
+LONGOPTS='help,download,debug,verbose,fast,skip-bfm,skip-ogstm,var3d,clone-options:,var3d-path:,var3d-branch:,bfm-path:,bfm-branch:,ogstm-path:,ogstm-branch:,module-file:,build-path:'
 ARGS=$(getopt --options '' --longoptions ${LONGOPTS} -- "${@}")
 if [[ $? -ne 0 ]]; then
         usage
@@ -44,7 +44,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # General settings
-DOWNLOAD=true
+DOWNLOAD=false
 DEBUG=false
 VAR3D=false
 MOD_NAME=m100.hpc-sdk
@@ -94,7 +94,7 @@ while true; do
             shift
         ;;
         (--no-download)
-	        DOWNLOAD=false
+	        DOWNLOAD=true
             shift
         ;;
         (--var3d)

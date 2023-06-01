@@ -3,5 +3,5 @@
 ```
 git clone -b dev_gpu git@github.com:inogs/ModelBuild.git
 cd ModelBuild
-./build.sh [--no-download] [--debug]
+./build.sh [--download] [--debug]
 ```
