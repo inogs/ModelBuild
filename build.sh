@@ -93,7 +93,7 @@ while true; do
             DEBUG_SUFFIX=.dbg
             shift
         ;;
-        (--no-download)
+        (--download)
 	        DOWNLOAD=true
             shift
         ;;
