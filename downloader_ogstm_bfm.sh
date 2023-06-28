@@ -25,9 +25,9 @@ cd Forward_Adjoint
 git checkout -b $OASIM_RELEASE $OASIM_RELEASE
 
 cd $OGSTM_HOME
-git clone git@github.com:pogmat/OASIM-experiments.git OASIM
+git clone git@github.com:BIOPTIMOD/OASIM_ATM.git OASIM
 cd OASIM
-git checkout -b $OASIM_RELEASE $OASIM_RELEASE
+#git checkout -b $OASIM_RELEASE $OASIM_RELEASE
 
 cd $OGSTM_HOME
 git clone git@gitlab.hpc.cineca.it:OGS/3DVar.git
