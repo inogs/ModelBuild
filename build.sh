@@ -20,7 +20,7 @@ DESCRIPTION
         --ogstm-branch      OGSTM_BRANCH        Which branch of OGSTM tree to use (default dev_gpu/trcadv)
         --bfm-branch        BFM_BRANCH          Which branch of BFM tree to use (default dev_gpu/mesozoo)
         --var3d-branch      VAR3D_BRANCH        Which branch of 3DVar tree to use (default dev_gpu)
-        --conda-env         CONDA_ENV           Which conda environment to use for running Python scripts. 
+	--conda-env         CONDA_ENV           Which conda environment name to use for running Python scripts (default ogstm-bfm)
     Compilation options
         --verbose                               Increases verbosity
         --fast                                  Avoids clearing cache/invoking cmake
