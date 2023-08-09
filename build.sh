@@ -20,6 +20,7 @@ DESCRIPTION
         --ogstm-branch      OGSTM_BRANCH        Which branch of OGSTM tree to use (default dev_gpu/trcadv)
         --bfm-branch        BFM_BRANCH          Which branch of BFM tree to use (default dev_gpu/mesozoo)
         --var3d-branch      VAR3D_BRANCH        Which branch of 3DVar tree to use (default dev_gpu)
+        --conda-env         CONDA_ENV           Which conda environment to use for running Python scripts. 
     Compilation options
         --verbose                               Increases verbosity
         --fast                                  Avoids clearing cache/invoking cmake
@@ -36,7 +37,7 @@ DESCRIPTION
 EOF
 }
 
-LONGOPTS='help,download,debug,verbose,fast,skip-bfm,skip-ogstm,var3d,clone-options:,var3d-path:,var3d-branch:,bfm-path:,bfm-branch:,ogstm-path:,ogstm-branch:,module-file:,build-path:'
+LONGOPTS='help,download,debug,verbose,fast,skip-bfm,skip-ogstm,var3d,clone-options:,var3d-path:,var3d-branch:,conda-env:,bfm-path:,bfm-branch:,ogstm-path:,ogstm-branch:,module-file:,build-path:'
 ARGS=$(getopt --options '' --longoptions ${LONGOPTS} -- "${@}")
 if [[ $? -ne 0 ]]; then
         usage
@@ -47,7 +48,7 @@ fi
 DOWNLOAD=false
 DEBUG=false
 VAR3D=false
-MOD_NAME=m100.hpc-sdk
+MOD_NAME=leonardo.nvhpc
 BUILD_PATH="${ROOT}/OGSTM_BUILD"
 VERBOSE=false
 BUILD_BFM=true
@@ -57,12 +58,13 @@ CLEAR_CACHE=true
 # BFM settings
 BFM_PATH="${ROOT}/bfm"
 BFM_REPO=git@github.com:BFM-Community/BiogeochemicalFluxModel.git
-BFM_BRANCH=dev_gpu/mesozoo
+BFM_BRANCH=dev_gpu
 
 # OGSTM settings
 OGSTM_REPO=git@github.com:inogs/ogstm.git
 OGSTM_BRANCH=dev_gpu/trcadv
 OGSTM_PATH="${ROOT}/ogstm"
+CONDA_ENV=ogstm-bfm
 
 # VAR3D settings
 VAR3D_REPO=git@gitlab.hpc.cineca.it:OGS/3DVar.git
@@ -163,8 +165,10 @@ if [[ $DOWNLOAD == true ]]; then
     git clone ${GIT_CLONE_OPTIONS} --branch ${OGSTM_BRANCH} -- ${OGSTM_REPO} "${OGSTM_PATH}" || echo "An error occurred while cloning OGSTM. Skipping"
 fi 
 
-echo -e "\n==== Sourcing ${MOD_NAME} ===="
-source "$ROOT/ogstm/compilers/machine_modules/${MOD_NAME}" || :
+if [[ $BUILD_BFM == true || $BUILD_OGSTM == true ]]; then
+    echo -e "\n==== Sourcing ${MOD_NAME} ===="
+    source "$ROOT/ogstm/compilers/machine_modules/${MOD_NAME}" || :
+fi
 
 if [[ $BUILD_BFM == true ]]; then
     echo -e "\n==== Building BFM ===="
@@ -197,16 +201,11 @@ if [[ $BUILD_OGSTM == true ]]; then
     fi
     CMAKE_COMMONS="-DCMAKE_VERBOSE_MAKEFILE=ON "
     CMAKE_COMMONS+="-DMPIEXEC_EXECUTABLE=$(which mpiexec) "
-    if [[ $MOD_NAME == m100.hpc-sdk ]]; then
+    if [[ $MOD_NAME == leonardo.nvhpc ]]; then
         CMAKE_COMMONS+="-DCMAKE_C_COMPILER_ID=PGI "
         CMAKE_COMMONS+="-DCMAKE_Fortran_COMPILER_ID=PGI "
-        CMAKE_COMMONS+="-DMPI_C_COMPILER=$(which mpipgicc) "
-        CMAKE_COMMONS+="-DMPI_Fortran_COMPILER=$(which mpipgifort) "
-    elif [[ $MOD_NAME == m100.gnu ]]; then
-        CMAKE_COMMONS+="-DCMAKE_C_COMPILER_ID=GNU "
-        CMAKE_COMMONS+="-DCMAKE_Fortran_COMPILER_ID=GNU "
         CMAKE_COMMONS+="-DMPI_C_COMPILER=$(which mpicc) "
-        CMAKE_COMMONS+="-DMPI_Fortran_COMPILER=$(which mpifort) "
+        CMAKE_COMMONS+="-DMPI_Fortran_COMPILER=$(which mpif90) "
     fi
     CMAKE_COMMONS+="-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} "
     CMAKE_COMMONS+="-DNETCDF_INCLUDES_C=${NETCDF_INC} "
@@ -247,11 +246,11 @@ if [[ $BUILD_OGSTM == true ]]; then
     make
 fi
 
-if [[ $CLEAR_CACHE == true ]]; then
+if [[ $BUILD_OGSTM == true && $CLEAR_CACHE == true ]]; then
    echo -e "\n==== Generating namelists ===="
    cp "${BFM_PATH}/build/tmp/OGS_PELAGIC/namelist.passivetrc" "${OGSTM_PATH}/bfmv5/"
    cd "${OGSTM_PATH}/bfmv5/" || exit
-   ./ogstm_namelist_gen.py
+   conda run -n ${CONDA_ENV} python ogstm_namelist_gen.py
    
    mkdir -p "${OGSTM_PATH}/ready_for_model_namelists/"
    cp "${OGSTM_PATH}/src/namelists/namelist"* "${OGSTM_PATH}/ready_for_model_namelists/"
