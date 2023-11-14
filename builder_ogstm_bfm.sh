@@ -142,25 +142,28 @@ export BIOPTIMOD_3STREAM_LIBRARY=$BIOPTIMOD_3STREAM_DIR/lib
 
 
 ## OASIM SECTION #####
-cd $OASIM_DIR/dll
+cd $OASIM_DIR
 if [ $OGSTM_COMPILER == intel ]; then
-    ./setup-intel.sh
-    SUFFIX=i
+    COMPILERNAME=intel
 else
-    ./setup-gcc.sh
-    SUFFIX=g
-fi
-if [ $DEBUG == .dbg ] ; then
-    OASIM_BUILD=build_$SUFFIX
-else
-    OASIM_BUILD=release_$SUFFIX
+    COMPILERNAME==gcc
 fi
 
+
+if [ $DEBUG == .dbg ] ; then
+    VERSION=debug
+else
+    VERSION=release
+fi
+
+BUILDFILE=build_${VERSION}_${COMPILERNAME}.sh
+OASIM_BUILD=builds/${VERSION}_${COMPILERNAME}
+bash $BUILDFILE
 cd $OASIM_BUILD
 make
 if [ $? -ne 0 ] ; then  echo  ERROR in $PWD; exit 1 ; fi
-export OASIM_ATM_INCLUDE=$OASIM_DIR/dll/$OASIM_BUILD/modules
-export OASIM_ATM_LIBRARY=$OASIM_DIR/dll/$OASIM_BUILD
+export OASIM_ATM_INCLUDE=$OASIM_DIR/$OASIM_BUILD/modules
+export OASIM_ATM_LIBRARY=$OASIM_DIR/$OASIM_BUILD/OASIMlib
 
 ##########################
 
@@ -236,7 +239,7 @@ mkdir -p ${OGSTMDIR}/ready_for_model_namelists/
 if [ $BFMversion == bfmv5 ] ; then
    cp ${BFMDIR}/build/tmp/OGS_PELAGIC/namelist.passivetrc ${OGSTMDIR}/bfmv5/
    cd ${OGSTMDIR}/bfmv5/
-   ./ogstm_namelist_gen.py #generates namelist.passivetrc_new
+    ./ogstm_namelist_gen.py #generates namelist.passivetrc_new
 
    cp ${OGSTMDIR}/src/namelists/namelist*    ${OGSTMDIR}/ready_for_model_namelists/
    cp namelist.passivetrc_new                ${OGSTMDIR}/ready_for_model_namelists/namelist.passivetrc #overwriting
