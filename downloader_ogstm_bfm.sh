@@ -1,8 +1,8 @@
 #! /bin/bash
 
 
- OGSTM_RELEASE=release-4.6
- BFM_RELEASE=ogs_release-5.2.0
+ OGSTM_RELEASE=release-4.6.1
+ BFM_RELEASE=ogs_release-5.3.0
  VAR3D_RELEASE=release-4.1
  OASIM_RELEASE=release-1.0
 
@@ -27,7 +27,7 @@ cd Forward_Adjoint
 git checkout -b $OASIM_RELEASE $OASIM_RELEASE
 
 cd $OGSTM_HOME
-git clone git@github.com:pogmat/OASIM-experiments.git OASIM
+git clone git@github.com:BIOPTIMOD/OASIM_ATM.git OASIM
 cd OASIM
 git checkout -b $OASIM_RELEASE $OASIM_RELEASE
 
