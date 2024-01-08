@@ -17,8 +17,8 @@ DESCRIPTION
     Download options
         --download                              Download the source code from GitHub
         --clone-options     GIT_CLONE_OPTIONS   git-clone options (such as --single-branch)
-        --ogstm-branch      OGSTM_BRANCH        Which branch of OGSTM tree to use (default dev_gpu/trcadv)
-        --bfm-branch        BFM_BRANCH          Which branch of BFM tree to use (default dev_gpu/mesozoo)
+        --ogstm-branch      OGSTM_BRANCH        Which branch of OGSTM tree to use (default dev_gpu)
+        --bfm-branch        BFM_BRANCH          Which branch of BFM tree to use (default dev_gpu)
         --var3d-branch      VAR3D_BRANCH        Which branch of 3DVar tree to use (default dev_gpu)
 	--conda-env         CONDA_ENV           Which conda environment name to use for running Python scripts (default ogstm-bfm)
     Compilation options
@@ -62,7 +62,7 @@ BFM_BRANCH=dev_gpu
 
 # OGSTM settings
 OGSTM_REPO=git@github.com:inogs/ogstm.git
-OGSTM_BRANCH=dev_gpu/trcadv
+OGSTM_BRANCH=dev_gpu
 OGSTM_PATH="${ROOT}/ogstm"
 CONDA_ENV=ogstm-bfm
 
