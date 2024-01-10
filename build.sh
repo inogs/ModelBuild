@@ -7,7 +7,7 @@ ROOT=$(dirname -- "${BASH_SOURCE[0]}" | xargs realpath)
 usage() {
     more << EOF
 NAME
-    This script download and compile the coupled OGSTM-BFM model (by default, for Marconi 100 with GPU support enabled).
+    This script download and compile the coupled OGSTM-BFM model (by default, for Leonardo with GPU support enabled).
 
 SYNOPSIS
     usage: $0 --help
