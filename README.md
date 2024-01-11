@@ -1,4 +1,4 @@
-# OGSTM-BFM on GPU, HowTo
+# HowTo: OGSTM-BFM on GPU
 
 ## Where to find the code
 
@@ -67,7 +67,73 @@ An `environment.yml` file is provided with OGSTM, and a Conda environment with t
 
 ## Structure of the code
 
-In the following we will assume default naming of the ModelBuild, OGSTM and BFM repositories. 
+In the following we will assume default naming of the ModelBuild, OGSTM and BFM repositories. Hence the directory tree should look like the following
+
+    ModelBuild
+    ├── bfm
+    │   ├── bin
+    │   ├── build
+    │   ├── compilers
+    │   ├── doc
+    │   ├── include
+    │   ├── lib
+    │   ├── logs
+    │   ├── run
+    │   ├── src
+    │   └── tools
+    └── ogstm
+        ├── application
+        ├── bfmv5
+        ├── bin
+        ├── cmake
+        ├── compilers
+        ├── logs
+        ├── preproc
+        ├── ready_for_model_namelists
+        ├── src
+        └── testcase
+
+The relevant source code for OGSTM is under `ModelBuild/ogstm/src`
+
+    ogstm/src
+    ├── BC
+    ├── BIO
+    ├── DA
+    ├── General
+    ├── IO
+    ├── MPI
+    ├── namelists
+    └── PHYS
+
+In particular, the main routines are defined in `General`, `PHYS`, and `BIO`. The first contains `ogstm.f90` and `step.f90`, which implements the program logic (initialization, stepping and finalization) and the time stepping routine respectively. `PHYS` contains, among the others, the sources for advection (`trcadv.f90`), horizontal diffusion (`trhdf.f90`), and vertical diffusion (`trzdf.f90`). `BIO` contains the wrapper around BFM. The interface between the two pieces of software is defined in `ogstm/src/BIO/trcbio.f90` and in `bfm/src/ogstm`, within the latter the relevant files are `BFM1D_Input_Ecology.F90` and `BFM1D_Output_Ecology.F90`. In particular, `BFM1D_Output_Ecology.F90` is generated via Perl, starting from the template `bfm/scripts/proto/BFM1D_Output_Ecology.proto`.
+
+The logic of OGSTM-BFM is the following
+
+```
+initialize OGSTM
+while simulation time is less than stopping time {
+    compute advection trend
+    compute horizontal diffusion trend
+    compute surface processes trend
+    compute biogeochemical reactor trend {
+        compute optical model trend
+        compute ecology dynamics trend {
+            copy inputs to BFM
+            run ecology dynamics {
+                
+            }
+            copy back the results to OGSTM
+        }
+        compute sedimentation model trend
+    }
+    compute vertical diffusion trend implicitly
+    compensate water mass balance
+    apply boundary conditions
+    apply trend
+    compute averages
+}
+finalize OGSTM
+```
 
 ## How to generate and run a test
 
@@ -91,6 +157,4 @@ mpirun -np $RANKS_PER_NODE ./ogstm.xx
 
 The variable `RANKS_PER_NODE` has to be defined, and must be equal to the number of MPI processes declared in the `TEST_LIST.dat` file (`nprocx` times `nprocy`) and stored within the `domdec.txt` file, included in the testcase directory. If the two are different, the process will exit with an error.
 
-[1:] OGSTM divide the diagnostic variable in two groups, saved to disk with different frequency.
-
-## GPU porting strategy
+[^1]: OGSTM divide the diagnostic variable in two groups, saved to disk with different frequency.
