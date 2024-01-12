@@ -105,23 +105,56 @@ The relevant source code for OGSTM is under `ModelBuild/ogstm/src`
     ├── namelists
     └── PHYS
 
+While for 
+BFM, the most important pieces of code are under `ModelBuild/bfm/src/BFM`
+
+    bfm/src/BFM
+    ├── BenBio
+    ├── CO2
+    ├── Forcing
+    ├── General
+    ├── include
+    ├── Light
+    ├── Pel
+    ├── PelBen
+    └── Seaice
+
 In particular, the main routines are defined in `General`, `PHYS`, and `BIO`. The first contains `ogstm.f90` and `step.f90`, which implements the program logic (initialization, stepping and finalization) and the time stepping routine respectively. `PHYS` contains, among the others, the sources for advection (`trcadv.f90`), horizontal diffusion (`trhdf.f90`), and vertical diffusion (`trzdf.f90`). `BIO` contains the wrapper around BFM. The interface between the two pieces of software is defined in `ogstm/src/BIO/trcbio.f90` and in `bfm/src/ogstm`, within the latter the relevant files are `BFM1D_Input_Ecology.F90` and `BFM1D_Output_Ecology.F90`. In particular, `BFM1D_Output_Ecology.F90` is generated via Perl, starting from the template `bfm/scripts/proto/BFM1D_Output_Ecology.proto`.
 
-The logic of OGSTM-BFM is the following
+
+
+
+Excluding minor complications and details, the logic of the whole OGSTM-BFM is the following
 
 ```
 initialize OGSTM
 while simulation time is less than stopping time {
+    if simulation time is a restart time {
+        write restart files
+    }
+    if simulation time is a diagnostic dump time {
+        dump diagnostics on files 
+    } 
     compute advection trend
+    compute newtonian damping trend
     compute horizontal diffusion trend
     compute surface processes trend
     compute biogeochemical reactor trend {
         compute optical model trend
         compute ecology dynamics trend {
             copy inputs to BFM
-            run ecology dynamics {
-                
+            compute sea ice dynamics
+            compute plagic system dynamics {
+                compute oxygen saturation and air-sea flux
+                compute phytoplankton dynamics
+                compute bacteria dynamics
+                compute meso-zooplankton dynamics
+                compute micro-zooplankton dynamics
+                compute pelagic chemistry dynamics {
+                    compute carbonate system dynamics
+                }
             }
+            compute benthic dynamics
             copy back the results to OGSTM
         }
         compute sedimentation model trend
@@ -129,10 +162,38 @@ while simulation time is less than stopping time {
     compute vertical diffusion trend implicitly
     compensate water mass balance
     apply boundary conditions
-    apply trend
+    compute new state from trend
+    exchange ghost cells
     compute averages
 }
 finalize OGSTM
+```
+
+At the moment of writing, the routines that have been ported to GPU are the advection routine (contained in `ogstm/src/PHYS/trcadv.f90`), the ghost cell exchange routine (in `ogstm/src/MPI/ogstm_mpi.f90`), the meso-zooplankton routine (in `bfm/src/BFM/Pel/MesoZoo.F90`), the micro-zooplankton routine (in `bfm/src/BFM/Pel/MicroZoo.F90`), and the pelagic chemistry routine (in `bfm/src/BFM/Pel/PelChem.F90`), with the exclusion of the carbonate system dynamics routine (in `bfm/src/BFM/CO2/CarbonateSystem.F90`), which will require a full re-write, since it is **not** written as element-wise, array operations. The phytoplankton routine (in `bfm/src/BFM/Pel/Phyto.F90`) has been partially offloaded on GPU.
+
+Let's focus on the BFM section of the time stepping loop. 
+
+The main two objects in memory on which BFM operates are the `D3STATE` and the `D3SOURCE`, which are multidimensional arrays having two indices, one for the point of the domain and one for the biogeochemical variable under consideration. `D3STATE` represent the current state of the system, while `D3SOURCE` the trend due to biogeochemical processes. For the whole BFM, `D3STATE` serves as input and `D3SOURCE` as output. There are also variables holding diagnostics (`D2DIAGNOS` and `D3DIAGNOS`) and fluxes (like `D3FLUX_MATRIX`). All these objects are defined within `bfm/src/General/ModuleMem.F90`. Since many (but not all) biogeochemical variables are conserved, most of the time one is subtracting a certain quantity (_flux_) from one column and adding the same quantity to another column of `D3STATE`. This operation is so common that a few special functions are defined in `bfm/src/BFM/General/FluxFunctions.h90`, these are `flux_vector` and `quota_flux`. Most code paths of both have been ported to GPU.
+
+Other Almost all the execution time is spent within the pelagic system dynamic routine (`bfm/src/BFM/Pel/PelagicSystem.F90`).  
+
+The order of the routines called within the latter does not matter, with the exclusion of the pelagic chemistry dynamics, which must be the last one to be executed. Indeed, the latter will read some values from the trend and diagnostic variables to compute its own trend term.
+
+The immediate objective of the GPU migration is to fully port every routine called within the pelagic system routine to GPU, such that only one synchronization of `D3STATE` and `D3SOURCE` are needed respectively at the beginning and at the end of the pelagic system routine.
+
+```
+compute plagic system dynamics {
+    # update device
+    compute oxygen saturation and air-sea flux
+    compute phytoplankton dynamics
+    compute bacteria dynamics
+    compute meso-zooplankton dynamics
+    compute micro-zooplankton dynamics
+    compute pelagic chemistry dynamics {
+        compute carbonate system dynamics
+    }
+    # update host
+}
 ```
 
 ## How to generate and run a test
@@ -156,5 +217,9 @@ mpirun -np $RANKS_PER_NODE ./ogstm.xx
 ```
 
 The variable `RANKS_PER_NODE` has to be defined, and must be equal to the number of MPI processes declared in the `TEST_LIST.dat` file (`nprocx` times `nprocy`) and stored within the `domdec.txt` file, included in the testcase directory. If the two are different, the process will exit with an error.
+
+You can compare that your results match between a GPU accelerated and non-accelerated version of your code, comparing to the bit level the outputs in `AVE_FREQ_1` and `AVE_FREQ_2` directories. To do so, you'll need two different OGSTM-BFM binaries and run the tests in separate folders (with the same settings).
+
+A simple Python script is provided to compare the files included in these directories, `ogstm/testcase/scripts/comparedatasets.py`. 
 
 [^1]: OGSTM divide the diagnostic variable in two groups, saved to disk with different frequency.
