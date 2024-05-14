@@ -1,0 +1,9 @@
+name: ogstm-bfm
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - netcdf4
+  - numpy
+  - scipy
+  - matplotlib

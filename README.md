@@ -36,6 +36,7 @@ The script will clone by default the `dev_gpu` branch of both OGSTM and BFM, the
     DESCRIPTION
         Download options
             --download                              Download the source code from GitHub
+            --create-env                            Create a Conda environment named CONDA_ENV 
             --clone-options     GIT_CLONE_OPTIONS   git-clone options (such as --single-branch)
             --ogstm-branch      OGSTM_BRANCH        Which branch of OGSTM tree to use (default dev_gpu)
             --bfm-branch        BFM_BRANCH          Which branch of BFM tree to use (default dev_gpu)

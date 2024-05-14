@@ -16,6 +16,7 @@ SYNOPSIS
 DESCRIPTION
     Download options
         --download                              Download the source code from GitHub
+        --create-env                            Create a Conda environment named CONDA_ENV 
         --clone-options     GIT_CLONE_OPTIONS   git-clone options (such as --single-branch)
         --ogstm-branch      OGSTM_BRANCH        Which branch of OGSTM tree to use (default dev_gpu)
         --bfm-branch        BFM_BRANCH          Which branch of BFM tree to use (default dev_gpu)
@@ -37,7 +38,7 @@ DESCRIPTION
 EOF
 }
 
-LONGOPTS='help,download,debug,verbose,fast,skip-bfm,skip-ogstm,var3d,clone-options:,var3d-path:,var3d-branch:,conda-env:,bfm-path:,bfm-branch:,ogstm-path:,ogstm-branch:,module-file:,build-path:'
+LONGOPTS='help,download,create-env,debug,verbose,fast,skip-bfm,skip-ogstm,var3d,clone-options:,var3d-path:,var3d-branch:,conda-env:,bfm-path:,bfm-branch:,ogstm-path:,ogstm-branch:,module-file:,build-path:'
 ARGS=$(getopt --options '' --longoptions ${LONGOPTS} -- "${@}")
 if [[ $? -ne 0 ]]; then
         usage
@@ -46,6 +47,7 @@ fi
 
 # General settings
 DOWNLOAD=false
+CREATE_ENV=false
 DEBUG=false
 VAR3D=false
 MOD_NAME=leonardo.nvhpc
@@ -97,6 +99,10 @@ while true; do
         ;;
         (--download)
 	        DOWNLOAD=true
+            shift
+        ;;
+        (--create-env)
+	        CREATE_ENV=true
             shift
         ;;
         (--var3d)
@@ -163,7 +169,12 @@ if [[ $DOWNLOAD == true ]]; then
     git clone ${GIT_CLONE_OPTIONS} --branch ${BFM_BRANCH} -- ${BFM_REPO} "${BFM_PATH}" || echo "An error occurred while cloning BFM. Skipping."
     echo -e "\n==== Downloading OGSTM ===="
     git clone ${GIT_CLONE_OPTIONS} --branch ${OGSTM_BRANCH} -- ${OGSTM_REPO} "${OGSTM_PATH}" || echo "An error occurred while cloning OGSTM. Skipping"
-fi 
+fi
+
+if [[ $CREATE_ENV == true ]]; then
+    echo -e "\n==== Creating Conda environment $CONDA_ENV"
+    conda env create --file environment.yaml --yes
+fi
 
 if [[ $BUILD_BFM == true || $BUILD_OGSTM == true ]]; then
     echo -e "\n==== Sourcing ${MOD_NAME} ===="
