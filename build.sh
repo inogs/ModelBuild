@@ -267,4 +267,5 @@ if [[ $BUILD_OGSTM == true && $CLEAR_CACHE == true ]]; then
    cp "${OGSTM_PATH}/src/namelists/namelist"* "${OGSTM_PATH}/ready_for_model_namelists/"
    cp namelist.passivetrc_new "${OGSTM_PATH}/ready_for_model_namelists/namelist.passivetrc"
    cp "${BFM_PATH}/build/tmp/OGS_PELAGIC/"*.nml "${OGSTM_PATH}/ready_for_model_namelists/"
+   cp "$ROOT/ogstm/compilers/machine_modules/${MOD_NAME}" "${BUILD_PATH}/machine.modules" || :
 fi
