@@ -29,7 +29,7 @@ DESCRIPTION
         --skip-ogstm                            Disables OGSTM building
         --debug                                 Compiles debug version
         --var3d                                 Enables data assimilation component
-        --machine-modules   MOD_NAME            Specifies which file (among the available ones in OGSTM) to source, to load modules
+        --modules           MOD_NAME            Specifies which file (among the available ones in OGSTM) to source, to load modules
         --build-path        BUILD_PATH          Where to build OGSTM-BFM (relative to the location of $0, default OGSTM_BUILD)
         --ogstm-path        OGSTM_PATH          Where to look for the OGSTM source (relative to the location of $0, default ogstm)
         --bfm-path          BFM_PATH            Where to look for the BFM source (relative to the location of $0, default bfm)
@@ -38,7 +38,7 @@ DESCRIPTION
 EOF
 }
 
-LONGOPTS='help,download,create-env,debug,verbose,fast,skip-bfm,skip-ogstm,var3d,clone-options:,var3d-path:,var3d-branch:,conda-env:,bfm-path:,bfm-branch:,ogstm-path:,ogstm-branch:,module-file:,build-path:'
+LONGOPTS='help,download,create-env,debug,verbose,fast,skip-bfm,skip-ogstm,var3d,clone-options:,var3d-path:,var3d-branch:,conda-env:,bfm-path:,bfm-branch:,ogstm-path:,ogstm-branch:,modules:,build-path:'
 ARGS=$(getopt --options '' --longoptions ${LONGOPTS} -- "${@}")
 if [[ $? -ne 0 ]]; then
         usage
@@ -137,7 +137,7 @@ while true; do
 	        OGSTM_BRANCH=${2}
             shift 2
         ;;
-        (--machine-modules)
+        (--modules)
 	        MOD_NAME=${2}
             shift 2
         ;;
