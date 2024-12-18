@@ -1,7 +1,7 @@
 #! /bin/bash
 
 
- OGSTM_RELEASE=release-4.6.1
+ OGSTM_RELEASE=release-4.6.2
  BFM_RELEASE=ogs_release-5.3.0
  VAR3D_RELEASE=release-4.1
  OASIM_RELEASE=release-1.0
