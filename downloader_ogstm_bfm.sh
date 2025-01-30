@@ -1,10 +1,11 @@
 #! /bin/bash
 
 
- OGSTM_RELEASE=release-4.6.2
+ OGSTM_RELEASE=release-4.6.3
  BFM_RELEASE=ogs_release-5.3.0
  VAR3D_RELEASE=release-4.1
  OASIM_RELEASE=release-1.0
+ BITSEA_RELEASE=V11C-r2.0
 
 
 # ----------- BFM library ---------------------
@@ -35,4 +36,5 @@ cd $OGSTM_HOME
 git clone git@gitlab.hpc.cineca.it:OGS/3DVar.git
 cd 3DVar
 git checkout -b $VAR3D_RELEASE $VAR3D_RELEASE
+
 
