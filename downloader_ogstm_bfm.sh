@@ -1,7 +1,7 @@
 #! /bin/bash
 
 
- OGSTM_BRANCH=neccton
+ OGSTM_BRANCH=neccton_WP8
  OASIM_RELEASE=release-1.0
 
 # ----------- BFM library ---------------------
@@ -11,7 +11,7 @@ OGSTM_HOME=$PWD
 # Requirement: to have an account on git server
 git clone git@github.com:CMCC-Foundation/BiogeochemicalFluxModel.git bfm
 cd bfm
-git checkout neccton
+git checkout $OGSTM_BRANCH
 
 cd $OGSTM_HOME
 git clone git@github.com:inogs/ogstm.git
