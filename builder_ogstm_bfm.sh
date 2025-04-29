@@ -12,6 +12,7 @@
 #             In the following example user will select the file x86_64.LINUX.intel.dbg.inc
 #             both in bfm/compilers/ and ogstm/compilers 
 
+OGSTM_MACHINE=g100
 OGSTM_ARCH=x86_64
 OGSTM_OS=LINUX
 OGSTM_COMPILER=intel
@@ -34,7 +35,7 @@ export OPENMP_FLAG=          # OpenMP deactivated
 # Warning : this choice must be consistent with Section 1. 
 
 # Just comment the two following lines you are not using modules. 
-export MODULEFILE=$PWD/ogstm/compilers/machine_modules/g100.intel
+export MODULEFILE=$PWD/ogstm/compilers/machine_modules/${OGSTM_MACHINE}.${OGSTM_COMPILER}
 source $MODULEFILE
 
 
