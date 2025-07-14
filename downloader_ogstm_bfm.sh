@@ -1,7 +1,7 @@
 #! /bin/bash
 
 
- OGSTM_BRANCH=V12C
+ OGSTM_BRANCH=bioptimod_merge
  BFM_BRANCH=dev_ogs_V12C
  VAR3D_RELEASE=release-4.1
  OASIM_RELEASE=release-1.0
