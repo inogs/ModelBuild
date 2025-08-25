@@ -1,7 +1,7 @@
 #! /bin/bash
 
 
- OGSTM_BRANCH=neccton
+ OGSTM_BRANCH=17-integration-with-fabm
  OASIM_RELEASE=release-1.0
 
 # ----------- BFM library ---------------------
