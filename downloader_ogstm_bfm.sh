@@ -28,3 +28,20 @@ git clone git@github.com:BIOPTIMOD/OASIM_ATM.git OASIM
 
 
 
+# ----------- FABM library ---------------------
+
+cd $OGSTM_HOME
+git clone https://github.com/fabm-model/fabm.git
+cd fabm
+
+MODEL_SELECTED="ogstm_test"
+
+# Create host driver
+mkdir -p src/drivers/$MODEL_SELECTED
+cat <<EOL > src/drivers/$MODEL_SELECTED/fabm_driver.h
+#define _FABM_DIMENSION_COUNT_ 1
+#define _FABM_DEPTH_DIMENSION_INDEX_ 1
+#define _FABM_VECTORIZED_DIMENSION_INDEX_ 1
+
+#include "fabm.h"
+EOL

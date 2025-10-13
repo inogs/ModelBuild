@@ -34,7 +34,7 @@ export OPENMP_FLAG=          # OpenMP deactivated
 # Warning : this choice must be consistent with Section 1. 
 
 # Just comment the two following lines you are not using modules. 
-export MODULEFILE=$PWD/ogstm/compilers/machine_modules/g100.intel
+export MODULEFILE=$PWD/ogstm/compilers/machine_modules/leonardo.intel
 source $MODULEFILE
 
 
@@ -249,3 +249,26 @@ else
    cp ${OGSTMDIR}/src/namelists/namelist*    ${OGSTMDIR}/ready_for_model_namelists/
    cp ${BFMDIR}/src/namelist/*.nml           ${OGSTMDIR}/ready_for_model_namelists/
 fi
+
+
+# ----------- FABM library ---------------------
+
+cd $HOME/ModelBuild
+OGSTM_HOME=$PWD
+MODEL_SELECTED="ogstm_test"
+
+# Create build directory outside source tree
+mkdir -p $OGSTM_HOME/fabm_build
+mkdir -p $OGSTM_HOME/local        # ensure the local/ folder exists outside fabm
+
+cd $OGSTM_HOME/fabm_build
+
+# Load module for CMake (change if needed)
+module load cmake/3.27.7
+
+# Configure and build FABM
+cmake $OGSTM_HOME/fabm/ \
+      -DFABM_HOST=$MODEL_SELECTED \
+      -DCMAKE_INSTALL_PREFIX=$OGSTM_HOME/local/fabm/ogstm_test/   # install into /ModelBuild/local
+
+make install
