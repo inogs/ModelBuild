@@ -2,7 +2,7 @@
 
 
  OGSTM_BRANCH=bioptimod_merge
- BFM_BRANCH=dev_ogs_V12C
+ BFM_RELEASE=ogs_release-5.4.0
  VAR3D_RELEASE=release-4.1
  OASIM_RELEASE=release-1.0
 
@@ -13,7 +13,7 @@ OGSTM_HOME=$PWD
 # Requirement: to have an account on git server
 git clone git@github.com:CMCC-Foundation/BiogeochemicalFluxModel.git bfm
 cd bfm
-git switch dev_ogs_V12C
+git checkout -b $BFM_RELEASE $BFM_RELEASE
 
 cd $OGSTM_HOME
 git clone git@github.com:inogs/ogstm.git
