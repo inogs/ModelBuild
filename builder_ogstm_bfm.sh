@@ -253,7 +253,9 @@ fi
 
 # ----------- FABM library ---------------------
 
-cd $HOME/ModelBuild
+cd ..
+cd ..
+module unload cmake
 OGSTM_HOME=$PWD
 MODEL_SELECTED="ogstm_test"
 
