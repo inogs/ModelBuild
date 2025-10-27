@@ -101,6 +101,33 @@ else
    BFMversion=bfmv5
 fi
 
+
+# ----------- FABM library ---------------------
+
+cd ..
+OGSTM_HOME=$PWD
+MODEL_SELECTED="ogstm_test"
+
+# Create build directory outside source tree
+mkdir -p $OGSTM_HOME/fabm_build
+mkdir -p $OGSTM_HOME/local        # ensure the local/ folder exists outside fabm
+
+cd $OGSTM_HOME/fabm_build
+
+# Load module for CMake (change if needed)
+module load cmake/3.27.7
+
+# Configure and build FABM
+cmake $OGSTM_HOME/fabm/ \
+      -DFABM_HOST=$MODEL_SELECTED \
+      -DCMAKE_INSTALL_PREFIX=$OGSTM_HOME/local/fabm/ogstm_test/   # install into /ModelBuild/local
+
+make install
+module unload cmake
+
+cd $BFMDIR
+
+
 INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${OGSTM_COMPILER}${DEBUG}.inc
 
 if [ $BFMversion == BFMv2 ] ; then
@@ -250,27 +277,3 @@ else
    cp ${BFMDIR}/src/namelist/*.nml           ${OGSTMDIR}/ready_for_model_namelists/
 fi
 
-
-# ----------- FABM library ---------------------
-
-cd ..
-cd ..
-module unload cmake
-OGSTM_HOME=$PWD
-MODEL_SELECTED="ogstm_test"
-
-# Create build directory outside source tree
-mkdir -p $OGSTM_HOME/fabm_build
-mkdir -p $OGSTM_HOME/local        # ensure the local/ folder exists outside fabm
-
-cd $OGSTM_HOME/fabm_build
-
-# Load module for CMake (change if needed)
-module load cmake/3.27.7
-
-# Configure and build FABM
-cmake $OGSTM_HOME/fabm/ \
-      -DFABM_HOST=$MODEL_SELECTED \
-      -DCMAKE_INSTALL_PREFIX=$OGSTM_HOME/local/fabm/ogstm_test/   # install into /ModelBuild/local
-
-make install
