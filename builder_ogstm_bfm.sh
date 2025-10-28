@@ -115,6 +115,8 @@ mkdir -p $OGSTM_HOME/local        # ensure the local/ folder exists outside fabm
 cd $OGSTM_HOME/fabm_build
 
 # Load module for CMake (change if needed)
+ORIGINAL_CMAKE_MODULE=$(module list 2>&1 | grep -o 'cmake[^ ]*' | head -n 1)
+module unload cmake
 module load cmake/3.27.7
 
 # Configure and build FABM
@@ -123,9 +125,13 @@ cmake $OGSTM_HOME/fabm/ \
       -DCMAKE_INSTALL_PREFIX=$OGSTM_HOME/local/fabm/ogstm_test/   # install into /ModelBuild/local
 
 make install
+
+# --- Restore older CMake for the rest of the build (OASIM etc.) ---
 module unload cmake
+module load $ORIGINAL_CMAKE_MODULE
 
 cd $BFMDIR
+
 
 
 INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${OGSTM_COMPILER}${DEBUG}.inc
