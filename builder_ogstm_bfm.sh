@@ -74,6 +74,7 @@ else
    OGSTMDIR=$PWD/ogstm
    BIOPTIMOD_3STREAM_DIR=$PWD/Forward_Adjoint
    OASIM_DIR=$PWD/OASIM
+   FABMDIR=$PWD/local/fabm/ogstm_test
 fi
 
 
@@ -160,6 +161,9 @@ fi
 export BFM_INC=${BFMDIR}/include
 export BFM_LIB=${BFMDIR}/lib
 
+export FABM_INC=${FABMDIR}/include
+export FABM_LIB=${FABMDIR}/lib
+
 
 ###### BIOPTIMOD SECTION ###############
 cd $BIOPTIMOD_3STREAM_DIR/src
@@ -217,6 +221,8 @@ if [ $CMAKE -eq 1 ] ; then
         fi
 	export BFM_INCLUDE=$BFM_INC
 	export BFM_LIBRARY=$BFM_LIB
+	export FABM_INCLUDE=$FABM_INC
+	export FABM_LIBRARY=$FABM_LIB
 
 	
 	mkdir -p $OGSTM_BLD_DIR
