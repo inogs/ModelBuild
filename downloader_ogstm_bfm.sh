@@ -31,7 +31,7 @@ git clone git@github.com:BIOPTIMOD/OASIM_ATM.git OASIM
 # ----------- FABM library ---------------------
 
 cd $OGSTM_HOME
-git clone https://github.com/fabm-model/fabm.git
+git clone --recursive git@github.com:fabm-model/fabm-plus.git fabm
 cd fabm
 
 MODEL_SELECTED="ogstm_test"
