@@ -34,7 +34,7 @@ cd $OGSTM_HOME
 git clone --recursive git@github.com:fabm-model/fabm-plus.git fabm
 cd fabm
 
-MODEL_SELECTED="ogstm_test"
+MODEL_SELECTED="ogstm"
 
 # Create host driver
 mkdir -p src/drivers/$MODEL_SELECTED

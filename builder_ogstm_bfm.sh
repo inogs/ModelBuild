@@ -107,7 +107,7 @@ fi
 
 cd ..
 OGSTM_HOME=$PWD
-MODEL_SELECTED="ogstm_test"
+MODEL_SELECTED="ogstm"
 
 # Create build directory outside source tree
 mkdir -p $OGSTM_HOME/fabm_build
