@@ -45,3 +45,9 @@ cat <<EOL > src/drivers/$MODEL_SELECTED/fabm_driver.h
 
 #include "fabm.h"
 EOL
+
+cd extern
+git clone git@github.com:pmlmodelling/fabm-spectral.git
+git checkout -b split
+
+cd $OGSTM_HOME
