@@ -123,12 +123,11 @@ module load cmake/3.27.7
 # Configure and build FABM
 #export FFLAGS='-fcheck=all -O0 -Wall -Wextra -g -cpp -DDEBUG -DQUICK'
 export FFLAGS='-O0 -g -traceback -fp-stack-check -check bounds -fpe0'
-#FABM_ARGS="-DFABM_INSTITUTES=gotm;msi;ogs;spectral -DFABM_OGS_BASE=${REPO_DIR}/extern/ogs -DFABM_SPECTRAL_BASE=${REPO_DIR}/extern/fabm-spectral -DCMAKE_Fortran_COMPILER=gfortran  -DCMAKE_BUILD_TYPE=release"
-FABM_ARGS="-DFABM_INSTITUTES=gotm;msi;ogs;spectral -DFABM_OGS_BASE=${REPO_DIR}/extern/ogs -DFABM_SPECTRAL_BASE=${REPO_DIR}/extern/fabm-spectral -DCMAKE_Fortran_COMPILER=ifort  -DCMAKE_BUILD_TYPE=debug"
+#FABM_ARGS="-DFABM_INSTITUTES=gotm;msi;ogs;spectral -DFABM_OGS_BASE=$OGSTM_HOME/extern/ogs -DFABM_SPECTRAL_BASE=$OGSTM_HOME/extern/fabm-spectral -DCMAKE_Fortran_COMPILER=gfortran  -DCMAKE_BUILD_TYPE=release"
+FABM_ARGS="-DFABM_INSTITUTES=gotm;msi;ogs;spectral -DFABM_OGS_BASE=$OGSTM_HOME/fabm/extern/ogs -DFABM_SPECTRAL_BASE=$OGSTM_HOME/fabm/extern/fabm-spectral -DCMAKE_Fortran_COMPILER=ifort  -DCMAKE_BUILD_TYPE=debug"
 cmake $OGSTM_HOME/fabm/ \
       -DFABM_HOST=$MODEL_SELECTED \
-      -DCMAKE_INSTALL_PREFIX=$OGSTM_HOME/local/fabm/ogstm_test/ \  # install into /ModelBuild/local
-       $FABM_ARGS
+      -DCMAKE_INSTALL_PREFIX=$OGSTM_HOME/local/fabm/ogstm_test/ $FABM_ARGS
 
 make install
 
