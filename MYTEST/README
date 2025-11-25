@@ -1,5 +1,5 @@
- ifort -c  -I/leonardo_scratch/large/userexternal/plazzari/TMP/ModelBuild/local/fabm/ogstm_test/include  prova.F90  -o prova.o
- ifort -o prova.xx  prova.o /leonardo_scratch/large/userexternal/plazzari/TMP/ModelBuild/local/fabm/ogstm_test/lib64/libfabm.a /leonardo_scratch/large/userexternal/plazzari/TMP/ModelBuild/Forward_Adjoint/lib/libadj.a
+ ifort -c  -I../local/fabm/ogstm_test/include  prova.F90  -o prova.o
+ ifort -o prova.xx  prova.o ../local/fabm/ogstm_test/lib64/libfabm.a ../Forward_Adjoint/lib/libadj.a
  cp ../fabm/extern/ogs/fabm_monospectral_4PFTs.yaml .
  ln -fs fabm_monospectral_4PFTs.yaml fabm.yaml
  ./prova.xx
