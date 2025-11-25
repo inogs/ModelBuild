@@ -162,11 +162,11 @@ else
    if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
 fi
 
-export BFM_INC=${BFMDIR}/include
-export BFM_LIB=${BFMDIR}/lib
+BFM_INC=${BFMDIR}/include
+BFM_LIB=${BFMDIR}/lib
 
-export FABM_INC=${FABMDIR}/include
-export FABM_LIB=${FABMDIR}/lib
+FABM_INC=${FABMDIR}/include
+FABM_LIB=${FABMDIR}/lib
 
 
 ###### BIOPTIMOD SECTION ###############
