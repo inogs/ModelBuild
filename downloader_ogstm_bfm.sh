@@ -50,7 +50,8 @@ EOL
 
 cd extern
 git clone git@github.com:pmlmodelling/fabm-spectral.git
-git checkout -b split
+cd fabm-spectral
+git checkout split
 
 cd $OGSTM_HOME/fabm/extern/ogs/
 
