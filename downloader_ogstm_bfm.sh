@@ -52,4 +52,8 @@ cd extern
 git clone git@github.com:pmlmodelling/fabm-spectral.git
 git checkout -b split
 
+cd $OGSTM_HOME/fabm/extern/ogs/
+
+git checkout master
+
 cd $OGSTM_HOME
