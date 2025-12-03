@@ -55,5 +55,6 @@ git checkout -b split
 cd $OGSTM_HOME/fabm/extern/ogs/
 
 git checkout master
+git submodule update --init --recursive
 
 cd $OGSTM_HOME
