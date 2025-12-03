@@ -26,7 +26,7 @@ git checkout -b $OASIM_RELEASE $OASIM_RELEASE
 cd $OGSTM_HOME
 git clone git@github.com:BIOPTIMOD/OASIM_ATM.git OASIM
 cd OASIM
-git chekout oasim_fabm
+git checkout oasim_fabm
 
 
 
