@@ -41,7 +41,7 @@ MODEL_SELECTED="ogstm"
 # Create host driver
 mkdir -p src/drivers/$MODEL_SELECTED
 cat <<EOL > src/drivers/$MODEL_SELECTED/fabm_driver.h
-#define _FABM_DIMENSION_COUNT_ 1
+#define _FABM_DIMENSION_COUNT_ 3
 #define _FABM_DEPTH_DIMENSION_INDEX_ 1
 #define _FABM_VECTORIZED_DIMENSION_INDEX_ 1
 
