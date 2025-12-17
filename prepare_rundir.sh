@@ -1,8 +1,12 @@
 #!/bin/bash
 
+#HOMEDIR=/leonardo_scratch/large/userexternal/ggalli00/OGSTM-BFM-qDeg
+#TESTNAME=__TESTNAME__
+
 HOMEDIR=$PWD
 SETUPDIR=/leonardo_work/OGS23_PRACE_IT_0/ggalli00/OGSTM-BFM/qDEG_SETUP
 
+#RUNDIR=$HOMEDIR/$TESTNAME/wrkdir/MODEL/
 RUNDIR=$HOMEDIR/wrkdir/MODEL
 mkdir -p $RUNDIR
 
@@ -37,7 +41,7 @@ rsync -aP $NMLDIR/namelist.passivetrc $RUNDIR      #(!C) (stuff about output?)
 rsync -aP $NMLDIR/namelist.init $RUNDIR            #(!C) (lsbc, read_W_from_file, internal_sponging)
 rsync -aP $NMLDIR/namelist.optics $RUNDIR          #(!C)
 rsync -aP $NMLDIR/namelist.phys $RUNDIR            #(!C)
-rsync -aP $NMLDIR/oasim_config.yaml $RUNDIR
+rsync -aP $NMLDIR/oasim_config.yaml $RUNDIR            #
 
 rsync -aP $NMLDIR/*aveTimes $RUNDIR
 rsync -aP $NMLDIR/daTimes $RUNDIR
