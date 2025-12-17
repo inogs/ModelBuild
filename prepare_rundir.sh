@@ -37,6 +37,7 @@ rsync -aP $NMLDIR/namelist.passivetrc $RUNDIR      #(!C) (stuff about output?)
 rsync -aP $NMLDIR/namelist.init $RUNDIR            #(!C) (lsbc, read_W_from_file, internal_sponging)
 rsync -aP $NMLDIR/namelist.optics $RUNDIR          #(!C)
 rsync -aP $NMLDIR/namelist.phys $RUNDIR            #(!C)
+rsync -aP $NMLDIR/oasim_config.yaml $RUNDIR
 
 rsync -aP $NMLDIR/*aveTimes $RUNDIR
 rsync -aP $NMLDIR/daTimes $RUNDIR
