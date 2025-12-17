@@ -12,11 +12,14 @@
 #             In the following example user will select the file x86_64.LINUX.intel.dbg.inc
 #             both in bfm/compilers/ and ogstm/compilers 
 
+CODEDIR=$PWD/CODE
+cd $CODEDIR
+
 OGSTM_ARCH=x86_64
 OGSTM_OS=LINUX
 OGSTM_COMPILER=intel
-DEBUG=       # this is the choice for production flags 
-#DEBUG=.dbg   # this is the one for debug flags
+#DEBUG=       # this is the choice for production flags 
+DEBUG=.dbg   # this is the one for debug flags
 
 
 ################################################################### 
@@ -33,8 +36,9 @@ export OPENMP_FLAG=          # OpenMP deactivated
 # User can write his module file, in the directory below there are some examples.
 # Warning : this choice must be consistent with Section 1. 
 
-# Just comment the two following lines you are not using modules. 
-export MODULEFILE=$PWD/ogstm/compilers/machine_modules/g100.intel
+# Just comment the two following lines you are not using modules.
+export MODULEFILE=/leonardo_work/OGS23_PRACE_IT_0/ggalli00/OGSTM-BFM/leonardo.intel
+#export MODULEFILE=$PWD/ogstm/compilers/machine_modules/g100.intel
 source $MODULEFILE
 
 
@@ -43,7 +47,7 @@ source $MODULEFILE
 # Set OCEANVAR=true         to include oceanvar.
 #     DEBUG_OCEANVAR=.dbg   to use debug flags
 
-OCEANVAR=true
+OCEANVAR=false
 DEBUG_OCEANVAR=
 ###################################################################
 
@@ -72,9 +76,9 @@ if [ $# -eq 2 ] ; then
 else
    BFMDIR=$PWD/bfm
    OGSTMDIR=$PWD/ogstm
+   BIOPTIMOD_3STREAM_DIR=$PWD/Forward_Adjoint
+   OASIM_DIR=$PWD/OASIM
 fi
-
-
 
 
 
@@ -128,6 +132,48 @@ export BFM_INC=${BFMDIR}/include
 export BFM_LIB=${BFMDIR}/lib
 
 
+###### BIOPTIMOD SECTION ###############
+cd $BIOPTIMOD_3STREAM_DIR/src
+INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${OGSTM_COMPILER}${DEBUG}.inc
+cp $INC_FILE compiler.inc
+make
+if [ $? -ne 0 ] ; then  echo  ERROR in $PWD; exit 1 ; fi
+make libadj.a
+export BIOPTIMOD_3STREAM_INCLUDE=$BIOPTIMOD_3STREAM_DIR/include
+export BIOPTIMOD_3STREAM_LIBRARY=$BIOPTIMOD_3STREAM_DIR/lib
+
+##########################################
+
+
+## OASIM SECTION #####
+cd $OASIM_DIR
+if [ $OGSTM_COMPILER == intel ]; then
+    COMPILERNAME=intel
+else
+    COMPILERNAME==gcc
+fi
+
+
+if [ $DEBUG == .dbg ] ; then
+    VERSION=debug
+else
+    VERSION=release
+fi
+
+BUILDFILE=build_${VERSION}_${COMPILERNAME}.sh
+OASIM_BUILD=builds/${VERSION}_${COMPILERNAME}
+bash $BUILDFILE
+cd $OASIM_BUILD
+make
+if [ $? -ne 0 ] ; then  echo  ERROR in $PWD; exit 1 ; fi
+export OASIM_ATM_INCLUDE=$OASIM_DIR/$OASIM_BUILD/modules
+export OASIM_ATM_LIBRARY=$OASIM_DIR/$OASIM_BUILD/OASIMlib
+
+##########################
+
+
+
+
 CMAKE=1
 
 cd $OGSTMDIR/..
@@ -154,6 +200,7 @@ if [ $CMAKE -eq 1 ] ; then
     fi
     CMAKE_COMMONS+=" -DNETCDF_INCLUDES_C=$NETCDF_INC -DNETCDF_LIBRARIES_C=$NETCDF_LIB/libnetcdf.so -DNETCDFF_INCLUDES_F90=$NETCDFF_INC -DNETCDFF_LIBRARIES_F90=$NETCDFF_LIB/libnetcdff.so"
     CMAKE_COMMONS+=" -D${BFMversion}=ON"
+    #CMAKE_COMMONS+=" -DCMAKE_Fortran_FLAGS=gdept1d"
 
 	if [ $OCEANVAR == true ] ; then
 	    export DA_INCLUDE=$DA_INC
@@ -188,7 +235,6 @@ else
 
 fi
 
-
 if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
 
 ### OGSTM NAMELIST GENERATION (also by Frequency Control )
@@ -198,9 +244,9 @@ mkdir -p ${OGSTMDIR}/ready_for_model_namelists/
 if [ $BFMversion == bfmv5 ] ; then
    cp ${BFMDIR}/build/tmp/OGS_PELAGIC/namelist.passivetrc ${OGSTMDIR}/bfmv5/
    cd ${OGSTMDIR}/bfmv5/
-   ./ogstm_namelist_gen.py #generates namelist.passivetrc_new
+    ./ogstm_namelist_gen.py #generates namelist.passivetrc_new
 
-   cp ${OGSTMDIR}/src/namelists/namelist*    ${OGSTMDIR}/ready_for_model_namelists/ 
+   cp ${OGSTMDIR}/src/namelists/namelist*    ${OGSTMDIR}/ready_for_model_namelists/
    cp namelist.passivetrc_new                ${OGSTMDIR}/ready_for_model_namelists/namelist.passivetrc #overwriting
    cp ${BFMDIR}/build/tmp/OGS_PELAGIC/*.nml  ${OGSTMDIR}/ready_for_model_namelists/
 else
@@ -208,3 +254,4 @@ else
    cp ${OGSTMDIR}/src/namelists/namelist*    ${OGSTMDIR}/ready_for_model_namelists/
    cp ${BFMDIR}/src/namelist/*.nml           ${OGSTMDIR}/ready_for_model_namelists/
 fi
+

@@ -1,33 +1,49 @@
 #! /bin/bash
 
+OGSTM_BRANCH=neccton
+BFM_BRANCH=neccton
+VAR3D_RELEASE=release-4.1
+OASIM_RELEASE=release-1.0
 
-  BFM_version=bfmv5   #  BFMv2 or bfmv5
-  BFM_RELEASE=branches/pl_mod 
-
- OGSTM_BRANCH=master
- VAR3D_BRANCH=Multivariate
-
-SVN_USER=svnogs01  # user on https://hpc-forge.cineca.it/
 # ----------- BFM library ---------------------
 
-OGSTM_HOME=$PWD
+#MYCODE=/leonardo_work/OGS23_PRACE_IT_0/ggalli00/OGSTM-BFM/MYCODE
 
-if  [ $BFM_version ==  BFMv2 ] ; then
-
-svn co --username $SVN_USER https://hpc-forge.cineca.it/svn/${BFM_version}/${BFM_RELEASE} bfm
-
-else
-    # Requirement: to have an account on git server
-    git clone git@github.com:CMCC-Foundation/BiogeochemicalFluxModel.git bfm
-    cd bfm
-    git checkout -b dev_ogs origin/dev_ogs
-fi
+OGSTM_HOME=$PWD/CODE
+mkdir -p $OGSTM_HOME
 
 cd $OGSTM_HOME
-git clone git@github.com:inogs/ogstm.git
 
+# Requirement: to have an account on git server
+git clone git@github.com:BFM-Community/BiogeochemicalFluxModel.git bfm
+
+cd bfm
+git checkout $BFM_BRANCH
 
 cd $OGSTM_HOME
-git clone git@gitlab.hpc.cineca.it:OGS/3DVar.git
-cd 3DVar
-git checkout -b $VAR3D_BRANCH origin/$VAR3D_BRANCH
+git clone git@github.com:inogs/ogstm.git ogstm
+
+cd ogstm
+git checkout $OGSTM_BRANCH
+# TO FIX IN OGSTM AND COMMIT!
+
+#rsync -aP $MYCODE/GeneralCmake.cmake ./            #these are for gdept1d
+#rsync -aP $MYCODE/forcing_phys.f90 ./src/IO/       #ditto
+
+cd $OGSTM_HOME
+git clone git@github.com:BIOPTIMOD/Forward_Adjoint.git
+cd Forward_Adjoint
+git checkout -b $OASIM_RELEASE $OASIM_RELEASE
+
+cd $OGSTM_HOME
+git clone git@github.com:BIOPTIMOD/OASIM_ATM.git OASIM
+cd OASIM
+#git checkout -b $OASIM_RELEASE $OASIM_RELEASE
+
+# this should not be necessary (data assimilation)
+#cd $OGSTM_HOME
+#git clone git@gitlab.hpc.cineca.it:OGS/3DVar.git
+#cd 3DVar
+#git checkout -b $VAR3D_RELEASE $VAR3D_RELEASE
+
+
