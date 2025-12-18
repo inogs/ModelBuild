@@ -19,7 +19,7 @@ mapfile -t -O 1 var < $TFILE
 start_date=${var[1]}
 end_date=${var[2]}
 
-ln -sf $FORCINGS_DIR/*.nc $RUNDIR/FORCINGS
+ln -sf $FORCINGS_DIR/* $RUNDIR/FORCINGS #FORCINGS_DIR is already organised as /YYYY/MM/[TUVW]YYYYMM*.nc
 ln -sf $BDY_DIR/*.nc $RUNDIR/BC
 ln -sf $OPT_DIR/* $RUNDIR/OPTICS
 ln -sf $RST_DIR/*.nc $RUNDIR/RESTARTS
