@@ -10,6 +10,10 @@ SETUPDIR=/leonardo_work/OGS23_PRACE_IT_0/ggalli00/OGSTM-BFM/qDEG_SETUP
 RUNDIR=$HOMEDIR/wrkdir/MODEL
 mkdir -p $RUNDIR
 
+mkdir -p $RUNDIR/AVE_FREQ_1
+mkdir -p $RUNDIR/AVE_FREQ_2
+mkdir -p $RUNDIR/AVE_FREQ_3
+
 # move stuff / create links to RUNDIR
 
 # 1. ogstm-bfm executable
