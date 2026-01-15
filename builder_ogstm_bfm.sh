@@ -108,13 +108,11 @@ fi
 cd ..
 OGSTM_HOME=$PWD
 cd $OGSTM_HOME
-git clone --recursive git@github.com:fabm-model/fabm-plus.git fabm
 cd fabm
 
 MODEL_SELECTED="ogstm"
 
 # Create host driver
-mkdir -p src/drivers/$MODEL_SELECTED
 cat <<EOL > src/drivers/$MODEL_SELECTED/fabm_driver.h
 #define _FABM_DIMENSION_COUNT_ 3
 #define _FABM_DEPTH_DIMENSION_INDEX_ 1
@@ -122,16 +120,6 @@ cat <<EOL > src/drivers/$MODEL_SELECTED/fabm_driver.h
 
 #include "fabm.h"
 EOL
-
-cd extern
-git clone git@github.com:pmlmodelling/fabm-spectral.git
-cd fabm-spectral
-git checkout split
-
-cd $OGSTM_HOME/fabm/extern/ogs/
-
-git checkout master
-git submodule update --init --recursive
 
 cd $OGSTM_HOME
 
