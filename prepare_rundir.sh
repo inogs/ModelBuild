@@ -31,6 +31,8 @@ rsync -aP $SETUPDIR/MASKS/meshmask_025_z125.nc $RUNDIR/meshmask.nc
 rsync -aP $SETUPDIR/MASKS/bounmask.nc $RUNDIR
 rsync -aP $SETUPDIR/MASKS/bfmmask.nc $RUNDIR
 
+rsync -aP $SETUPDIR/genInputDatelists.sh $RUNDIR
+
 # 4. namelists etc. (!C: differs from the one in camadio v20)
 #NMLDIR=$HOMEDIR/CODE/ogstm/ready_for_model_namelists
 NMLDIR=$SETUPDIR/NAMELISTS
@@ -67,7 +69,7 @@ rsync -aP $NMLDIR/atl.nml $RUNDIR           #(!C, obviously!)
 rsync -aP $NMLDIR/gi1.nml $RUNDIR           #(!C, obviously!)
 rsync -aP $NMLDIR/gi2.nml $RUNDIR           #(!C, obviously!)
 rsync -aP $NMLDIR/gi3.nml $RUNDIR           #(!C, obviously!)
-#rsync -aP $NMLDIR/riv.nml $RUNDIR           #(!C, obviously!)
+rsync -aP $NMLDIR/riv.nml $RUNDIR           #(!C, obviously!)
 rsync -aP $NMLDIR/*.dat $RUNDIR           #(!C, obviously!)
 
 rsync -aP $NMLDIR/bcs $RUNDIR #optics parameters
