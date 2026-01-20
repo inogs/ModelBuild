@@ -17,14 +17,18 @@ mkdir -p $RUNDIR/AVE_FREQ_3
 # move stuff / create links to RUNDIR
 
 # 1. ogstm-bfm executable
-#ln -sf $HOMEDIR/CODE/OGSTM_BUILD/ogstm.xx $RUNDIR
-ln -sf $HOMEDIR/CODE/OGSTM_BUILD_DBG/ogstm.xx $RUNDIR
+ln -sf $HOMEDIR/CODE/OGSTM_BUILD/ogstm.xx $RUNDIR
+#ln -sf $HOMEDIR/CODE/OGSTM_BUILD_DBG/ogstm.xx $RUNDIR
 
 # 2. domdec.110 is for quarter deg resolution
 #    (domdec file gets linked by job.slurm)
+rsync -aP $SETUPDIR/DOMDEC_JOB/domdec.444.txt $RUNDIR #just a domdec, maybe not optimal
+rsync -aP $SETUPDIR/DOMDEC_JOB/domdec.220.txt $RUNDIR #just a domdec, maybe not optimal
 rsync -aP $SETUPDIR/DOMDEC_JOB/domdec.107.txt $RUNDIR #just a domdec, maybe not optimal
 rsync -aP $SETUPDIR/DOMDEC_JOB/domdec.1.txt $RUNDIR #to run 1 core only
 rsync -aP $SETUPDIR/DOMDEC_JOB/job.1x107.slurm $RUNDIR/job.slurm
+rsync -aP $SETUPDIR/DOMDEC_JOB/job.4x111.slurm $RUNDIR
+rsync -aP $SETUPDIR/DOMDEC_JOB/job.2x110.slurm $RUNDIR
 
 # 3. masks
 rsync -aP $SETUPDIR/MASKS/meshmask_025_z125.nc $RUNDIR/meshmask.nc

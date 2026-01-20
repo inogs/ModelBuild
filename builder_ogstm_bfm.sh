@@ -18,8 +18,8 @@ cd $CODEDIR
 OGSTM_ARCH=x86_64
 OGSTM_OS=LINUX
 OGSTM_COMPILER=intel
-#DEBUG=       # this is the choice for production flags 
-DEBUG=.dbg   # this is the one for debug flags
+DEBUG=       # this is the choice for production flags 
+#DEBUG=.dbg   # this is the one for debug flags
 
 
 ################################################################### 
