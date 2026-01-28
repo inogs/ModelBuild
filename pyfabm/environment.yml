@@ -1,0 +1,27 @@
+name: ogstm-fabm
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.8
+  - pip
+  - fortran-compiler
+  - netcdf-fortran=4.5.3
+  - jupyterlab
+  - cmake
+  - numpy
+  - matplotlib=3.4.*
+  - scipy
+  - ipympl
+  - netcdf4
+  - pyyaml
+  - nco
+  - salib
+  - blas    # for EAT
+  - lapack  # for EAT
+  - mpi4py  # for EAT
+  - cython  # for EAT
+  - pyqt    # for PyNcView
+  - pip:
+      - pyncview
+      - https://www.parallelpython.com/downloads/pp/pp-1.6.4.4.zip

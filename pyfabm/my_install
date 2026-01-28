@@ -1,0 +1,18 @@
+# This script is intended to be source'd, not executed
+
+set -e
+
+REPO_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+export REPO_DIR
+
+#export FFLAGS='-fcheck=all -O0 -Wall -Wextra -g -cpp -DDEBUG -DQUICK'
+
+# Add additional FABM "institutes" (bfm, ecosmo, etc.) and their base directory on the line below.
+FABM_ARGS="-DFABM_INSTITUTES=gotm;msi;ogs;spectral -DFABM_OGS_BASE=${REPO_DIR}/extern/ogs -DFABM_SPECTRAL_BASE=${REPO_DIR}/extern/fabm-spectral -DCMAKE_Fortran_COMPILER=gfortran  -DCMAKE_BUILD_TYPE=release"
+
+# Build pyfabm
+cd ${REPO_DIR}
+cp setup.cfg.fabm ../fabm/setup.cfg
+cd ../fabm/
+python -m pip install .

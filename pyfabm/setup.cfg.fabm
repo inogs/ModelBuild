@@ -1,0 +1,4 @@
+[build_ext]
+cmake_opts=-DFABM_EXTRA_INSTITUTES=ogs;spectral -DFABM_OGS_BASE=extern/ogs -DFABM_SPECTRAL_BASE=extern/fabm-spectral
+force=1
+debug=1
