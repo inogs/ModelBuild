@@ -20,10 +20,8 @@ You may in the meantime be able to continue these instructions by executing `eva
 Now obtain the repository with setups and scripts:
 
 ```
-git clone --recursive git@github.com:inogs/seamless-notebooks.git
-cd seamless-notebooks
 conda env create -f environment.yml
-conda activate seamless-bb
+conda activate ogstm-fabm
 bash ./my_install
 ```
 
@@ -32,7 +30,7 @@ bash ./my_install
 To update this repository *including its submodules (FABM, ERSEM, PISCES, etc.)*, make sure you are in the `seamless-notebooks` directory and execute:
 
 ```
-conda activate seamless-bb
+conda activate ogstm-fabm
 git pull --recurse-submodules
 git submodule update --init --recursive
 conda env update -f environment.yml
