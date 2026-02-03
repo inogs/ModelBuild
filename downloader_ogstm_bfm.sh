@@ -1,16 +1,24 @@
 #! /bin/bash
 
+OPA_HOME=$1
+
 OGSTM_BRANCH=neccton
 BFM_BRANCH=neccton
 VAR3D_RELEASE=release-4.1
 OASIM_RELEASE=release-1.0
+
+# some postproc scripts with my paths
+PPROC_DIR=/leonardo_work/OGS23_PRACE_IT_0/ggalli00/OGSTM-BFM/qDEG_SETUP/MYCODE/ogstm_postptoc
+BITSEA_DIR=/leonardo_work/OGS23_PRACE_IT_0/ggalli00/OGSTM-BFM/qDEG_SETUP/MYCODE/bitsea
 
 # ----------- BFM library ---------------------
 
 #MYCODE=/leonardo_work/OGS23_PRACE_IT_0/ggalli00/OGSTM-BFM/MYCODE
 
 OGSTM_HOME=$PWD/CODE
+PPROC_HOME=$PWD/wrkdir/POSTPROC
 mkdir -p $OGSTM_HOME
+mkdir -p $PPROC_HOME
 
 cd $OGSTM_HOME
 
@@ -46,4 +54,28 @@ cd OASIM
 #cd 3DVar
 #git checkout -b $VAR3D_RELEASE $VAR3D_RELEASE
 
+cd $PPROC_HOME
+git clone git@github.com:inogs/bit.sea.git
 
+# clone ogstm_postproc
+# and replace / add / modify relevant files
+git clone git@github.com:inogs/ogstm_postproc.git
+cd ogstm_postproc/MY_optics
+
+rsync -aP $PPROC_DIR/job.POST.singleyear.slurm .
+rsync -aP $PPROC_DIR/VarDescriptor_2.xml .
+rsync -aP $PPROC_DIR/VarDescriptor_1.xml .
+rsync -aP $PPROC_DIR/VarDescriptorB.xml .
+rsync -aP $PPROC_DIR/profiler.tpl .
+rsync -aP $PPROC_DIR/timeseries.sh .
+rsync -aP $PPROC_DIR/maps.sh .
+rsync -aP $PPROC_DIR/maps_MY.sh .
+
+sed "s|__OPA_HOME__|$OPA_HOME|" $PPROC_DIR/config.template.sh > config.sh
+sed "s|__OPA_HOME__|$OPA_HOME|" $PPROC_DIR/timeseries_user_settings.txt > timeseries_user_settings.txt
+sed -i "s|__CINECA_SCRATCH__|$CINECA_SCRATCH|" timeseries_user_settings.txt
+
+cd $PPROC_HOME
+cd ./bit.sea/src/bitsea/validation/deliverables
+
+rsync -aP $BITSEA_DIR/Plotlist_bio.xml . 

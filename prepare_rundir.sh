@@ -1,18 +1,18 @@
 #!/bin/bash
 
-#HOMEDIR=/leonardo_scratch/large/userexternal/ggalli00/OGSTM-BFM-qDeg
-#TESTNAME=__TESTNAME__
+OPA_HOME=$1
 
 HOMEDIR=$PWD
 SETUPDIR=/leonardo_work/OGS23_PRACE_IT_0/ggalli00/OGSTM-BFM/qDEG_SETUP
 
-#RUNDIR=$HOMEDIR/$TESTNAME/wrkdir/MODEL/
 RUNDIR=$HOMEDIR/wrkdir/MODEL
 mkdir -p $RUNDIR
 
 mkdir -p $RUNDIR/AVE_FREQ_1
 mkdir -p $RUNDIR/AVE_FREQ_2
 mkdir -p $RUNDIR/AVE_FREQ_3
+
+mkdir -p $RUNDIR/STD_OUTERR
 
 # move stuff / create links to RUNDIR
 
@@ -29,6 +29,11 @@ rsync -aP $SETUPDIR/DOMDEC_JOB/domdec.1.txt $RUNDIR #to run 1 core only
 rsync -aP $SETUPDIR/DOMDEC_JOB/job.1x107.slurm $RUNDIR/job.slurm
 rsync -aP $SETUPDIR/DOMDEC_JOB/job.4x111.slurm $RUNDIR
 rsync -aP $SETUPDIR/DOMDEC_JOB/job.2x110.slurm $RUNDIR
+rsync -aP $SETUPDIR/DOMDEC_JOB/job_step.2x110.slurm $RUNDIR
+sed -i "s|__OPA_HOME__|$OPA_HOME|" $RUNDIR/job_step.2x110.slurm
+# job step stuff
+rsync -aP $SETUPDIR/DOMDEC_JOB/setup_launch.py $RUNDIR
+#sed "s|__OPA_HOME__|$OPA_HOME|" $SETUPDIR/DOMDEC_JOB/job_step.2x100.template.slurm > $RUNDIR/job_step.2x100.slurm
 
 # 3. masks
 rsync -aP $SETUPDIR/MASKS/meshmask_025_z125.nc $RUNDIR/meshmask.nc
@@ -74,6 +79,7 @@ rsync -aP $NMLDIR/gi1.nml $RUNDIR           #(!C, obviously!)
 rsync -aP $NMLDIR/gi2.nml $RUNDIR           #(!C, obviously!)
 rsync -aP $NMLDIR/gi3.nml $RUNDIR           #(!C, obviously!)
 rsync -aP $NMLDIR/riv.nml $RUNDIR           #(!C, obviously!)
+rsync -aP $NMLDIR/r3l.nml $RUNDIR           #(!C, obviously!)
 rsync -aP $NMLDIR/*.dat $RUNDIR           #(!C, obviously!)
 
 rsync -aP $NMLDIR/bcs $RUNDIR #optics parameters
