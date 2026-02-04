@@ -187,6 +187,8 @@ BFM_LIB=${BFMDIR}/lib
 FABM_INC=${FABMDIR}/include
 FABM_LIB=${FABMDIR}/lib
 
+YAML_INC=${FABMDIR}/include/yaml
+
 
 ###### BIOPTIMOD SECTION ###############
 cd $BIOPTIMOD_3STREAM_DIR/src
@@ -246,6 +248,7 @@ if [ $CMAKE -eq 1 ] ; then
 	export BFM_LIBRARY=$BFM_LIB
 	export FABM_INCLUDE=$FABM_INC
 	export FABM_LIBRARY=$FABM_LIB
+	export YAML_INCLUDE=$YAML_INC
 
 	
 	mkdir -p $OGSTM_BLD_DIR
