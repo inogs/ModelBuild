@@ -1,13 +1,14 @@
 #!/bin/bash
 
-export set -Eeuo pipefail
+#export set -Eeuo pipefail
 
-TESTNAME=T02
+TESTNAME=T0X
 SCRATCHDIR=OGSTM-BFM-qDeg
 
 start_date=19990101
-end_date=20210101
+end_date=20060101
 
+OPA_HOME=$SCRATCHDIR/$TESTNAME
 HOMEDIR=/leonardo_work/OGS23_PRACE_IT_0/ggalli00/OGSTM-BFM/  
 RUNDIR=/leonardo_scratch/large/userexternal/ggalli00/$OPA_HOME
 
@@ -15,11 +16,9 @@ RUNDIR=/leonardo_scratch/large/userexternal/ggalli00/$OPA_HOME
 ### From here on all automated ###
 ##################################
 
-OPA_HOME=$SCRATCHDIR/$TESTNAME
-
 # write StartEndTimes
-echo "${start_date}-00:00:00" > $HOMEDIR/MyStartEndTimes
-echo -e "${end_date}-00:00:00" >> $HOMEDIR/MyStartEndTimes
+echo "${start_date}-00:00:00" > $HOMEDIR/qDEG_SETUP/NAMELISTS/StartEndTimes
+echo -e "${end_date}-00:00:00" >> $HOMEDIR/qDEG_SETUP/NAMELISTS/StartEndTimes
 
 mkdir -p $RUNDIR
 

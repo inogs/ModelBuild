@@ -26,7 +26,8 @@ end_date=${var[2]}
 ln -sf $FORCINGS_DIR/* $RUNDIR/FORCINGS #FORCINGS_DIR is already organised as /YYYY/MM/[TUVW]YYYYMM*.nc
 ln -sf $BDY_DIR/*.nc $RUNDIR/BC
 ln -sf $OPT_DIR/* $RUNDIR/OPTICS
-ln -sf $RST_DIR/*.nc $RUNDIR/RESTARTS
+#ln -sf $RST_DIR/*.nc $RUNDIR/RESTARTS
+ln -sf $RST_DIR/RST.${start_date}*.nc $RUNDIR/RESTARTS
 ln -sf $RIV_DIR/TIN*.nc $RUNDIR/BC
 ln -sf $NDG_DIR/R3l*.nc $RUNDIR/bc
 ln -sf $HOMEDIR/R3l_bclib/R3l_025.nc $RUNDIR/R3l.nc
@@ -37,11 +38,11 @@ for f in "$RIV_DIR"/TIN_*.nc; do
   ln -sf "$f" "$RUNDIR/BC/$link_name"
 done
 
-# cheat because restarts are 1999 but forcings are 2000
-for f in $RUNDIR/RESTARTS/RST.1999*.nc; do
-  ln -s "$f" "${f/1999/1998}"
-  ln -s "$f" "${f/1999/2000}"
-done
+## cheat because restarts are 1999 but forcings are 2000
+#for f in $RUNDIR/RESTARTS/RST.1999*.nc; do
+#  ln -s "$f" "${f/1999/1998}"
+#  ln -s "$f" "${f/1999/2000}"
+#done
 
 # generate datelists
 cd $RUNDIR

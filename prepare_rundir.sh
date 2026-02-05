@@ -41,7 +41,7 @@ mapfile -t -O 1 var < $TFILE
 t0=${var[1]}
 tE=${var[2]}
 start_date=${t0:0:8}-000000
-end_date=${t0:0:8}-000000
+end_date=${tE:0:8}-000000
 #rstdate=$(($y0-1))1231
 rsync -aP $SETUPDIR/DOMDEC_JOB/job_step.2x110.template.slurm $RUNDIR
 sed -i "s|__OPA_HOME__|$OPA_HOME|" $RUNDIR/job_step.2x110.template.slurm
