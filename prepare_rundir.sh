@@ -29,11 +29,25 @@ rsync -aP $SETUPDIR/DOMDEC_JOB/domdec.1.txt $RUNDIR #to run 1 core only
 rsync -aP $SETUPDIR/DOMDEC_JOB/job.1x107.slurm $RUNDIR/job.slurm
 rsync -aP $SETUPDIR/DOMDEC_JOB/job.4x111.slurm $RUNDIR
 rsync -aP $SETUPDIR/DOMDEC_JOB/job.2x110.slurm $RUNDIR
-rsync -aP $SETUPDIR/DOMDEC_JOB/job_step.2x110.slurm $RUNDIR
-sed -i "s|__OPA_HOME__|$OPA_HOME|" $RUNDIR/job_step.2x110.slurm
+#rsync -aP $SETUPDIR/DOMDEC_JOB/job_step.2x110.slurm $RUNDIR
+#sed -i "s|__OPA_HOME__|$OPA_HOME|" $RUNDIR/job_step.2x110.slurm
 # job step stuff
 rsync -aP $SETUPDIR/DOMDEC_JOB/setup_launch.py $RUNDIR
 #sed "s|__OPA_HOME__|$OPA_HOME|" $SETUPDIR/DOMDEC_JOB/job_step.2x100.template.slurm > $RUNDIR/job_step.2x100.slurm
+
+# read Start_End_Times and writes them to job_step.2x110.slurm
+TFILE=$SETUPDIR/NAMELISTS/Start_End_Times
+mapfile -t -O 1 var < $TFILE
+t0=${var[1]}
+tE=${var[2]}
+start_date=${t0:0:8}-000000
+end_date=${t0:0:8}-000000
+#rstdate=$(($y0-1))1231
+rsync -aP $SETUPDIR/DOMDEC_JOB/job_step.2x110.template.slurm $RUNDIR
+sed -i "s|__OPA_HOME__|$OPA_HOME|" $RUNDIR/job_step.2x110.template.slurm
+sed -i "s|__START_DATE__|$start_date|" $RUNDIR/job_step.2x110.template.slurm
+sed -i "s|__END_DATE__|$end_date|" $RUNDIR/job_step.2x110.template.slurm
+mv $RUNDIR/job_step.2x110.template.slurm $RUNDIR/job_step.2x110.slurm
 
 # 3. masks
 rsync -aP $SETUPDIR/MASKS/meshmask_025_z125.nc $RUNDIR/meshmask.nc
