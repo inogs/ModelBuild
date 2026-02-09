@@ -2,7 +2,7 @@
 
 #export set -Eeuo pipefail
 
-TESTNAME=bR00
+export TESTNAME=T03_Zdeath
 SCRATCHDIR=OGSTM-BFM-qDeg
 
 start_date=20170101

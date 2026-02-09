@@ -74,6 +74,7 @@ rsync -aP $PPROC_DIR/maps_MY.sh .
 sed "s|__OPA_HOME__|$OPA_HOME|" $PPROC_DIR/config.template.sh > config.sh
 sed "s|__OPA_HOME__|$OPA_HOME|" $PPROC_DIR/timeseries_user_settings.txt > timeseries_user_settings.txt
 sed -i "s|__CINECA_SCRATCH__|$CINECA_SCRATCH|" timeseries_user_settings.txt
+sed -i "s|__TEST_NAME__|$TESTNAME|" timeseries_user_settings.txt
 
 cd $PPROC_HOME
 cd ./bit.sea/src/bitsea/validation/deliverables
