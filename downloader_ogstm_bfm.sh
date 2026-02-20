@@ -8,12 +8,12 @@ VAR3D_RELEASE=release-4.1
 OASIM_RELEASE=release-1.0
 
 # some postproc scripts with my paths
-PPROC_DIR=/leonardo_work/OGS23_PRACE_IT_0/ggalli00/OGSTM-BFM/qDEG_SETUP/MYCODE/ogstm_postptoc
-BITSEA_DIR=/leonardo_work/OGS23_PRACE_IT_0/ggalli00/OGSTM-BFM/qDEG_SETUP/MYCODE/bitsea
+MYCODE_DIR=/leonardo_work/OGS23_PRACE_IT_0/ggalli00/OGSTM-BFM/qDEG_SETUP/MYCODE
+PPROC_DIR=$MYCODE_DIR/ogstm_postptoc
+BITSEA_DIR=$MYCODE_DIR/bitsea
+BFM_DIR=$MYCODE_DIR/bfm
 
 # ----------- BFM library ---------------------
-
-#MYCODE=/leonardo_work/OGS23_PRACE_IT_0/ggalli00/OGSTM-BFM/MYCODE
 
 OGSTM_HOME=$PWD/CODE
 PPROC_HOME=$PWD/wrkdir/POSTPROC
@@ -27,6 +27,11 @@ git clone git@github.com:BFM-Community/BiogeochemicalFluxModel.git bfm
 
 cd bfm
 git checkout $BFM_BRANCH
+
+# to test code changes withou messing with git!
+#rsync -aP $BFM_DIR/Phyto.f90 $OGSTM_HOME/bfm/src/BFM/Pel/
+#rsync -aP $BFM_DIR/Phyto_minqlc.f90 $OGSTM_HOME/bfm/src/BFM/Pel/Phyto.f90
+#rsync -aP $BFM_DIR/Phyto_rhonoiN.f90 $OGSTM_HOME/bfm/src/BFM/Pel/Phyto.f90
 
 cd $OGSTM_HOME
 git clone git@github.com:inogs/ogstm.git ogstm

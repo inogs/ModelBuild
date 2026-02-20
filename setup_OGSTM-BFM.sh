@@ -2,7 +2,7 @@
 
 #export set -Eeuo pipefail
 
-export TESTNAME=T03_Zdeath
+export TESTNAME=T00
 SCRATCHDIR=OGSTM-BFM-qDeg
 
 start_date=20170101
@@ -11,6 +11,11 @@ end_date=20190101
 OPA_HOME=$SCRATCHDIR/$TESTNAME
 HOMEDIR=/leonardo_work/OGS23_PRACE_IT_0/ggalli00/OGSTM-BFM/  
 RUNDIR=/leonardo_scratch/large/userexternal/ggalli00/$OPA_HOME
+
+if [ -d "$RUNDIR" ]; then 
+  echo $RUNDIR already exists! Aborting OGSTM-BFM setup!
+  exit 1; 
+fi
 
 ##################################
 ### From here on all automated ###
