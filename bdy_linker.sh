@@ -3,13 +3,14 @@
 OPA_HOME=$1
 
 #reads start - end times and links BDYs and RESTARTS
-HOMEDIR=/leonardo_work/OGS23_PRACE_IT_0/ggalli00/OGSTM-BFM/qDEG_SETUP
+HOMEDIR=/leonardo_work/OGS_test2528_0/ggalli/OGSTM-BFM/qDEG_SETUP
 FORCINGS_DIR=$HOMEDIR/FORCINGS
 BDY_DIR=$HOMEDIR/BC
 NDG_DIR=$HOMEDIR/bc
 RST_DIR=$HOMEDIR/RESTARTS_T02
 OPT_DIR=$HOMEDIR/OPTICS
-RIV_DIR=/leonardo_work/OGS_test2528_0/COPERNICUS/Degradation/SETUP/PREPROC/BC/out
+#RIV_DIR=/leonardo_work/OGS_test2528_0/COPERNICUS/Degradation/SETUP/PREPROC/BC/out
+RIV_DIR=$HOMEDIR/RIV
 
 RUNDIR=$CINECA_SCRATCH/$OPA_HOME/wrkdir/MODEL
 mkdir -p $RUNDIR/FORCINGS
@@ -45,6 +46,7 @@ done
 #done
 
 # generate datelists
+echo generating datelists...
 cd $RUNDIR
 ./genInputDatelists.sh
 
