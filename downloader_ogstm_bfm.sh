@@ -1,7 +1,7 @@
 #! /bin/bash
 
 
- OGSTM_BRANCH=bioptimod_merge
+ OGSTM_BRANCH=20-introduction-of-in-situ-temperature
  BFM_RELEASE=ogs_release-5.4.0
  VAR3D_RELEASE=release-4.1
  OASIM_RELEASE=release-1.0
