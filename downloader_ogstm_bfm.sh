@@ -1,8 +1,8 @@
 #! /bin/bash
 
 
- OGSTM_BRANCH=20-introduction-of-in-situ-temperature
- BFM_RELEASE=ogs_release-5.4.0
+ OGSTM_BRANCH=28-v13c-quid
+ BFM_RELEASE=160-qlcmin
  VAR3D_RELEASE=release-4.1
  OASIM_RELEASE=release-1.0
 
@@ -13,7 +13,7 @@ OGSTM_HOME=$PWD
 # Requirement: to have an account on git server
 git clone git@github.com:CMCC-Foundation/BiogeochemicalFluxModel.git bfm
 cd bfm
-git checkout -b $BFM_RELEASE $BFM_RELEASE
+git checkout $BFM_RELEASE
 
 cd $OGSTM_HOME
 git clone git@github.com:inogs/ogstm.git
