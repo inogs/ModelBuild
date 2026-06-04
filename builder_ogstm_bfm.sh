@@ -16,7 +16,7 @@ OGSTM_ARCH=x86_64
 OGSTM_OS=LINUX
 OGSTM_COMPILER=intel
 DEBUG=       # this is the choice for production flags 
-DEBUG=.dbg   # this is the one for debug flags
+#DEBUG=.dbg   # this is the one for debug flags
 
 
 ################################################################### 
@@ -147,10 +147,12 @@ module unload cmake
 module load cmake/3.27.7
 
 # Configure and build FABM
-#export FFLAGS='-fcheck=all -O0 -Wall -Wextra -g -cpp -DDEBUG -DQUICK'
-export FFLAGS='-O0 -g -traceback -fp-stack-check -check bounds -fpe0'
-#FABM_ARGS="-DFABM_INSTITUTES=gotm;msi;ogs;spectral -DFABM_OGS_BASE=$OGSTM_HOME/extern/ogs -DFABM_SPECTRAL_BASE=$OGSTM_HOME/extern/fabm-spectral -DCMAKE_Fortran_COMPILER=gfortran  -DCMAKE_BUILD_TYPE=release"
-FABM_ARGS="-DFABM_INSTITUTES=gotm;msi;ogs;spectral -DFABM_OGS_BASE=$OGSTM_HOME/fabm/extern/ogs -DFABM_SPECTRAL_BASE=$OGSTM_HOME/fabm/extern/fabm-spectral -DCMAKE_Fortran_COMPILER=ifort  -DCMAKE_BUILD_TYPE=debug"
+# release
+export FFLAGS='-O2'
+FABM_ARGS="-DFABM_INSTITUTES=gotm;msi;ogs;spectral;rosenmcartur -DFABM_OGS_BASE=$OGSTM_HOME/fabm/extern/ogs  -DFABM_ROSENMCARTUR_BASE=$OGSTM_HOME/fabm/extern/rosenmcartur -DFABM_SPECTRAL_BASE=$OGSTM_HOME/fabm/extern/fabm-spectral -DCMAKE_Fortran_COMPILER=ifort  -DCMAKE_BUILD_TYPE=release"
+# Debug
+#export FFLAGS='-O0 -g -traceback -fp-stack-check -check bounds -fpe0'
+#FABM_ARGS="-DFABM_INSTITUTES=gotm;msi;ogs;spectral;rosenmcartur -DFABM_OGS_BASE=$OGSTM_HOME/fabm/extern/ogs  -DFABM_ROSENMCARTUR_BASE=$OGSTM_HOME/fabm/extern/rosenmcartur -DFABM_SPECTRAL_BASE=$OGSTM_HOME/fabm/extern/fabm-spectral -DCMAKE_Fortran_COMPILER=ifort  -DCMAKE_BUILD_TYPE=debug"
 cmake $OGSTM_HOME/fabm/ \
       -DFABM_HOST=$MODEL_SELECTED \
       -DCMAKE_INSTALL_PREFIX=$OGSTM_HOME/local/fabm/ogstm_test/ $FABM_ARGS
