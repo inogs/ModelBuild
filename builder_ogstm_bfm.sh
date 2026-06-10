@@ -150,11 +150,11 @@ module load cmake/3.27.7
 if [ "$DEBUG" = ".dbg" ]; then
     echo "FABM: Compiling with debug flags"
     export FFLAGS='-O0 -g -traceback -fp-stack-check -check bounds -fpe0'
-    FABM_ARGS="-DFABM_INSTITUTES=gotm;msi;ogs;spectral;rosenmcartur -DFABM_OGS_BASE=$OGSTM_HOME/fabm/extern/ogs  -DFABM_ROSENMCARTUR_BASE=$OGSTM_HOME/fabm/extern/rosenmcartur -DFABM_SPECTRAL_BASE=$OGSTM_HOME/fabm/extern/fabm-spectral -DCMAKE_Fortran_COMPILER=ifort  -DCMAKE_BUILD_TYPE=debug"
+    FABM_ARGS="-DFABM_INSTITUTES=gotm;msi;ogs;spectral -DFABM_OGS_BASE=$OGSTM_HOME/fabm/extern/ogs  -DFABM_SPECTRAL_BASE=$OGSTM_HOME/fabm/extern/fabm-spectral -DCMAKE_Fortran_COMPILER=ifort  -DCMAKE_BUILD_TYPE=debug"
 else
     echo "FABM: Compiling with production flags"
     export FFLAGS='-O2'
-      FABM_ARGS="-DFABM_INSTITUTES=gotm;msi;ogs;spectral;rosenmcartur -DFABM_OGS_BASE=$OGSTM_HOME/fabm/extern/ogs  -DFABM_ROSENMCARTUR_BASE=$OGSTM_HOME/fabm/extern/rosenmcartur -DFABM_SPECTRAL_BASE=$OGSTM_HOME/fabm/extern/fabm-spectral -DCMAKE_Fortran_COMPILER=ifort  -DCMAKE_BUILD_TYPE=release"
+      FABM_ARGS="-DFABM_INSTITUTES=gotm;msi;ogs;spectral -DFABM_OGS_BASE=$OGSTM_HOME/fabm/extern/ogs  -DFABM_SPECTRAL_BASE=$OGSTM_HOME/fabm/extern/fabm-spectral -DCMAKE_Fortran_COMPILER=ifort  -DCMAKE_BUILD_TYPE=release"
 fi
 
 cmake $OGSTM_HOME/fabm/ \
