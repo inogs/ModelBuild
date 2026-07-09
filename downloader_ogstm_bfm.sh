@@ -2,7 +2,7 @@
 
 
  OGSTM_BRANCH=28-v13c-quid
- BFM_RELEASE=160-qlcmin
+ BFM_RELEASE=neccton
  VAR3D_RELEASE=release-4.1
  OASIM_RELEASE=release-1.0
 
