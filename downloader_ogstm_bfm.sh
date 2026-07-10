@@ -34,6 +34,6 @@ cd $OGSTM_HOME
 git clone git@github.com:inogs/3dVarBio.git 3DVar
 cd 3DVar
 #git checkout -b $VAR3D_RELEASE $VAR3D_RELEASE
-git switch MultiVariate
+git switch Multivariate
 
 
