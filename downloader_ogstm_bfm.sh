@@ -3,7 +3,7 @@
 
  OGSTM_BRANCH=28-v13c-quid
  BFM_RELEASE=neccton
- VAR3D_RELEASE=release-4.1
+ VAR3D_BRANCH=MultiVariate
  OASIM_RELEASE=release-1.0
 
 # ----------- BFM library ---------------------
@@ -31,7 +31,7 @@ cd OASIM
 git checkout -b $OASIM_RELEASE $OASIM_RELEASE
 
 cd $OGSTM_HOME
-git clone git@gitlab.hpc.cineca.it:OGS/3DVar.git
+git clone git@github.com:inogs/3dVarBio.git 3DVar
 cd 3DVar
 git checkout -b $VAR3D_RELEASE $VAR3D_RELEASE
 
