@@ -1,7 +1,7 @@
 #! /bin/bash
 
 
- OGSTM_BRANCH=28-v13c-quid
+ OGSTM_BRANCH=neccton
  BFM_RELEASE=neccton
  VAR3D_RELEASE=release-4.2 # todo
  OASIM_RELEASE=release-1.0
