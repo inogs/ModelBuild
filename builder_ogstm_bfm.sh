@@ -1,53 +1,38 @@
 #! /bin/bash
 
-#         builder_ogstm_bfm.sh
+#      builder_ogstm_bfm.sh
 
-#      Edit sections 1,2,3,4 in order to configure compilation and linking.
+#      Edit the file builder_config.inc in this directory to configure compilation and linking
+#      (the file is ignored when the build is part of an OPA chain)
 
-################################################################### 
-#  Section 1. Choose the *.inc file, with the definition of compiler flags, to be included in Makefile
-#             
-#             This is a machine dependent operation, flags for
-#             most popular compilers (gnu, intel, xl) are provided.
-#             In the following example user will select the file x86_64.LINUX.intel.dbg.inc
-#             both in bfm/compilers/ and ogstm/compilers 
+# is_chain_compilation and the other functions shared with the downloader
+source "$(dirname "${BASH_SOURCE[0]}")/chain_utils.sh"
 
-OGSTM_ARCH=x86_64
-OGSTM_OS=LINUX
-OGSTM_COMPILER=intel
-DEBUG=       # this is the choice for production flags 
-#DEBUG=.dbg   # this is the one for debug flags
-
-
-################################################################### 
-#  Section 2. Use of OpenMP threads, to improve the parallelization of ogstm.
-# Just comment one of thes lines:
-export OPENMP_FLAG=-fopenmp  # OpenMP activated
-export OPENMP_FLAG=          # OpenMP deactivated
-
-
-###################################################################
-# Section 3.  Module loads (and set of environment variables)
-
-# This is a machine dependent operation. Modules are usually used on clusters.
-# User can write his module file, in the directory below there are some examples.
-# Warning : this choice must be consistent with Section 1. 
-
-# Just comment the two following lines you are not using modules. 
-export MODULEFILE=$PWD/ogstm/compilers/machine_modules/g100.intel
-source $MODULEFILE
-
-
-###################################################################
-# Section 4.  Oceanvar inclusion in model
-# Set OCEANVAR=true         to include oceanvar.
-#     DEBUG_OCEANVAR=.dbg   to use debug flags
-
-OCEANVAR=true
-DEBUG_OCEANVAR=
-###################################################################
-
-
+if is_chain_compilation ; then
+   # The configuration comes from the variables of the chain; the environment
+   # (compilers and libraries) is the one of the chain, so no module is loaded
+   OGSTM_ARCH=$OPA_ARCH
+   OGSTM_OS=${OPA_OS^^}    # the names of the *.inc files use LINUX, the chain linux
+   OGSTM_COMPILER=$OPA_COMPILER
+   DEBUG=
+   export OPENMP_FLAG=
+   OCEANVAR=true
+   DEBUG_OCEANVAR=
+   # The *.inc files for the chain are the ones with this suffix
+   CHAIN_INC_SUFFIX=.opa_chain
+   # Compilers, cmake and libraries of the spack environment of the chain, as
+   # the module file would set them; they are needed by cmake for ogstm (the
+   # *.inc files of the other components set them by themselves)
+   SPACK_VIEW=$OPA_HOME/HOST/$OPA_HOSTNAME/spack_env/.spack-env/view
+   export I_MPI_ROOT=$SPACK_VIEW/mpi/latest
+   export PATH=$SPACK_VIEW/oneapi-compilers/compiler/latest/bin:$I_MPI_ROOT/bin:$SPACK_VIEW/bin:$PATH
+   for LIBNAME in NETCDF NETCDFF PNETCDF PETSC ; do
+      export ${LIBNAME}_INC=$SPACK_VIEW/include
+      export ${LIBNAME}_LIB=$SPACK_VIEW/lib
+   done
+else
+   source "$(modelbuild_dir)/builder_config.inc"
+fi
 
 
 usage() {
@@ -83,7 +68,7 @@ fi
 # -------------- 3d_var _____
 if [ $OCEANVAR == true ] ; then
    cd 3DVar
-   INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${OGSTM_COMPILER}${DEBUG_OCEANVAR}.inc
+   INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${OGSTM_COMPILER}${DEBUG_OCEANVAR}${CHAIN_INC_SUFFIX}.inc
    cp $INC_FILE compiler.inc
    # make clean
    gmake
@@ -101,7 +86,7 @@ else
    BFMversion=bfmv5
 fi
 
-INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${OGSTM_COMPILER}${DEBUG}.inc
+INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${OGSTM_COMPILER}${DEBUG}${CHAIN_INC_SUFFIX}.inc
 
 if [ $BFMversion == BFMv2 ] ; then
    cd ${BFMDIR}/compilers
@@ -130,7 +115,7 @@ export BFM_LIB=${BFMDIR}/lib
 
 ###### BIOPTIMOD SECTION ###############
 cd $BIOPTIMOD_3STREAM_DIR/src
-INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${OGSTM_COMPILER}${DEBUG}.inc
+INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${OGSTM_COMPILER}${DEBUG}${CHAIN_INC_SUFFIX}.inc
 cp $INC_FILE compiler.inc
 make
 if [ $? -ne 0 ] ; then  echo  ERROR in $PWD; exit 1 ; fi
@@ -156,7 +141,7 @@ else
     VERSION=release
 fi
 
-BUILDFILE=build_${VERSION}_${COMPILERNAME}.sh
+BUILDFILE=build_${VERSION}_${COMPILERNAME}${CHAIN_INC_SUFFIX}.sh
 OASIM_BUILD=builds/${VERSION}_${COMPILERNAME}
 bash $BUILDFILE
 cd $OASIM_BUILD
@@ -185,11 +170,18 @@ if [ $CMAKE -eq 1 ] ; then
 	export BFM_INCLUDE=$BFM_INC
 	export BFM_LIBRARY=$BFM_LIB
 
-	
+
 	mkdir -p $OGSTM_BLD_DIR
 	cd $OGSTM_BLD_DIR
 
-    if [ $OGSTM_COMPILER == intel ] ; then
+    if is_chain_compilation ; then
+    # Intel oneAPI: ifx and icx, with the Intel MPI wrapper mpiifx
+    CMAKE_COMMONS=" -DCMAKE_VERBOSE_MAKEFILE=ON -DMPI_Fortran_COMPILER=mpiifx -DCMAKE_Fortran_COMPILER=ifx -DCMAKE_C_COMPILER=icx -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} "
+    # The dependencies are searched only among the files of ogstm: the Fortran
+    # scanner of cmake does not understand the include guards of the PETSc
+    # headers (#if !defined(...)), and it would include them recursively forever
+    CMAKE_COMMONS+=" -DCMAKE_DEPENDS_IN_PROJECT_ONLY=ON "
+    elif [ $OGSTM_COMPILER == intel ] ; then
     CMAKE_COMMONS=" -DCMAKE_VERBOSE_MAKEFILE=ON -DMPI_Fortran_COMPILER=mpiifort -DCMAKE_C_COMPILER=icc -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} "
     else
     CMAKE_COMMONS=" -DCMAKE_VERBOSE_MAKEFILE=ON -DMPI_Fortran_COMPILER=mpif90 -DCMAKE_C_COMPILER=gcc -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} "
@@ -209,7 +201,7 @@ if [ $CMAKE -eq 1 ] ; then
 	    cp ../ogstm/GeneralCmake.cmake ../ogstm/CMakeLists.txt
 	    echo $CMAKE_COMMONS
 	    cmake ../ogstm/ $CMAKE_COMMONS
-	    
+
 	fi
     make
 else
@@ -219,9 +211,9 @@ else
 	cd ${OGSTMDIR}/compilers
 	INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${OGSTM_COMPILER}${DEBUG}.inc
 	cp $INC_FILE compiler.inc
-	
+
 	cd ${OGSTMDIR}/build
-	./config_OGSTM.sh ${OGSTM_ARCH} 
+	./config_OGSTM.sh ${OGSTM_ARCH}
 	cd BLD_OGSTM
 	make clean
 	make -f MakeLib
@@ -232,6 +224,13 @@ fi
 
 if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
 
+# In an OPA chain the executable is used from $OPA_HOME/HOST/$OPA_HOSTNAME/bin,
+# through a symbolic link: a new build updates it immediately
+if is_chain_compilation ; then
+   mkdir -p $OPA_HOME/HOST/$OPA_HOSTNAME/bin
+   ln -sfn $OGSTMDIR/../$OGSTM_BLD_DIR/ogstm.xx $OPA_HOME/HOST/$OPA_HOSTNAME/bin/ogstm.xx
+fi
+
 ### OGSTM NAMELIST GENERATION (also by Frequency Control )
 
 mkdir -p ${OGSTMDIR}/ready_for_model_namelists/
@@ -239,7 +238,13 @@ mkdir -p ${OGSTMDIR}/ready_for_model_namelists/
 if [ $BFMversion == bfmv5 ] ; then
    cp ${BFMDIR}/build/tmp/OGS_PELAGIC/namelist.passivetrc ${OGSTMDIR}/bfmv5/
    cd ${OGSTMDIR}/bfmv5/
-    ./ogstm_namelist_gen.py #generates namelist.passivetrc_new
+   if is_chain_compilation ; then
+      # Python of the conda environment of the chain; its bin directory is added
+      # only for this command, since it contains also other tools (mpif90, ...)
+      PATH=$OPA_HOME/HOST/$OPA_HOSTNAME/python_env/bin:$PATH ./ogstm_namelist_gen.py #generates namelist.passivetrc_new
+   else
+      ./ogstm_namelist_gen.py #generates namelist.passivetrc_new
+   fi
 
    cp ${OGSTMDIR}/src/namelists/namelist*    ${OGSTMDIR}/ready_for_model_namelists/
    cp namelist.passivetrc_new                ${OGSTMDIR}/ready_for_model_namelists/namelist.passivetrc #overwriting
