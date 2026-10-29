@@ -30,6 +30,7 @@ if is_chain_compilation ; then
       export ${LIBNAME}_INC=$SPACK_VIEW/include
       export ${LIBNAME}_LIB=$SPACK_VIEW/lib
    done
+   cd $OPA_HOME/HOST/$OPA_HOSTNAME
 else
    source "$(modelbuild_dir)/builder_config.inc"
 fi
@@ -128,14 +129,14 @@ export BIOPTIMOD_3STREAM_LIBRARY=$BIOPTIMOD_3STREAM_DIR/lib
 
 ## OASIM SECTION #####
 cd $OASIM_DIR
-if [ $OGSTM_COMPILER == intel ]; then
+if [ "$OGSTM_COMPILER" == intel ]; then
     COMPILERNAME=intel
 else
-    COMPILERNAME==gcc
+    COMPILERNAME=gcc
 fi
 
 
-if [ $DEBUG == .dbg ] ; then
+if [ "$DEBUG" == .dbg ] ; then
     VERSION=debug
 else
     VERSION=release
@@ -181,7 +182,7 @@ if [ $CMAKE -eq 1 ] ; then
     # scanner of cmake does not understand the include guards of the PETSc
     # headers (#if !defined(...)), and it would include them recursively forever
     CMAKE_COMMONS+=" -DCMAKE_DEPENDS_IN_PROJECT_ONLY=ON "
-    elif [ $OGSTM_COMPILER == intel ] ; then
+    elif [ "$OGSTM_COMPILER" == intel ] ; then
     CMAKE_COMMONS=" -DCMAKE_VERBOSE_MAKEFILE=ON -DMPI_Fortran_COMPILER=mpiifort -DCMAKE_C_COMPILER=icc -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} "
     else
     CMAKE_COMMONS=" -DCMAKE_VERBOSE_MAKEFILE=ON -DMPI_Fortran_COMPILER=mpif90 -DCMAKE_C_COMPILER=gcc -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} "
