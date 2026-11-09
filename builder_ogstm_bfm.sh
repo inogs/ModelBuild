@@ -230,6 +230,14 @@ if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
 if is_chain_compilation ; then
    mkdir -p $OPA_HOME/HOST/$OPA_HOSTNAME/bin
    ln -sfn $OGSTMDIR/../$OGSTM_BLD_DIR/ogstm.xx $OPA_HOME/HOST/$OPA_HOSTNAME/bin/ogstm.xx
+   # Scripts for the generation of the float misfits, launched by the chain as
+   # $OPA_BINDIR/Float_misfit_gen.sh (OPA_BINDIR is the same bin directory) in
+   # the model_python job; Float_misfit_gen.sh calls the python scripts from
+   # $OPA_BINDIR as well
+   OGSTM_FLOATPRE=$OGSTMDIR/src/DA/external_scripts/float_preproc
+   for SCRIPTNAME in Float_misfit_gen.sh float_extractor.py preproc.py merge_arg_mis.py ; do
+      ln -sfn $OGSTM_FLOATPRE/$SCRIPTNAME $OPA_HOME/HOST/$OPA_HOSTNAME/bin/$SCRIPTNAME
+   done
 fi
 
 ### OGSTM NAMELIST GENERATION (also by Frequency Control )
